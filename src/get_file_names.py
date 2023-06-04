@@ -24,5 +24,5 @@ def get_file_names(matchers: tuple[str]) -> tuple[str]:
     # TODO: any OR all
     # =========================================================================
     return tuple(
-        name for name in os.listdir() if all(match in name for match in matchers)
+        file_name for file_name in os.listdir() if all(match in file_name for match in matchers)
     )

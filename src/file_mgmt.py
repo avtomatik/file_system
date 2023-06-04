@@ -9,26 +9,26 @@ FILE_NAMES = (
     'incompleteDataFusionUSACostIndex.py', 'incompletedataFetchCAN.py', 'incompleteDFT.py', 'incompleteUSABLSV.py'
 )
 
-PATH = '/Users/alexandermikhailov/Documents'
-delete_files(FILE_NAMES, PATH)
-PATH = '/Volumes/NO NAME'
-delete_files(FILE_NAMES, PATH)
-PATH = '/Volumes/NO NAME 1'
-delete_files(FILE_NAMES, PATH)
+PATH_SRC = '/Users/alexandermikhailov/Documents'
+delete_files(FILE_NAMES, PATH_SRC)
+PATH_SRC = '/Volumes/NO NAME'
+delete_files(FILE_NAMES, PATH_SRC)
+PATH_SRC = '/Volumes/NO NAME 1'
+delete_files(FILE_NAMES, PATH_SRC)
 
 
-PATH = '/Users/alexandermikhailov/Documents'
-rename_files(FILE_NAMES, PATH)
-PATH = '/Volumes/NO NAME 1'
-rename_files(FILE_NAMES, PATH)
-PATH = '/Volumes/NO NAME'
-rename_files(FILE_NAMES, PATH)
+PATH_SRC = '/Users/alexandermikhailov/Documents'
+rename_files(FILE_NAMES, PATH_SRC)
+PATH_SRC = '/Volumes/NO NAME 1'
+rename_files(FILE_NAMES, PATH_SRC)
+PATH_SRC = '/Volumes/NO NAME'
+rename_files(FILE_NAMES, PATH_SRC)
 
 
 FILE_NAMES = ('project.py', 'datafetch.py', 'tools.py', 'test.py')
 move_files(FILE_NAMES)
 
-PATH = '/Users/alexandermikhailov/Documents'
+PATH_SRC = '/Users/alexandermikhailov/Documents'
 FILE_NAMES = (
     'Reference EN Cobb C.W., Douglas P.H. A Theory of Production.pdf',
     'Reference EN Douglas P.H. The Theory of Wages.pdf',
@@ -39,6 +39,6 @@ FILE_NAMES = (
     'Reference RU Kurenkov Yu.V. Proizvodstvennye moshchnost v promyshlennosti glavnykh kapitalisticheskikh stran.pdf'
 )
 
-if os.getcwd() == PATH:
+if os.getcwd() == PATH_SRC:
     for file_name in FILE_NAMES:
         os.unlink(file_name)

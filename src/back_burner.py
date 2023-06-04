@@ -5,9 +5,8 @@
 import os
 
 import pandas as pd
-from pandas import DataFrame
-
 from lib import trim_file_name
+from pandas import DataFrame
 
 # =============================================================================
 # TODO: Edit This

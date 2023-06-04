@@ -19,7 +19,7 @@ FILEPATH = Path(PATH_EXP).joinpath(FILE_NAME)
 def read(filepath: PosixPath) -> DataFrame:
     kwargs = {
         'filepath_or_buffer': filepath,
-        'names': ['time_stamp', 'file_name', 'status'],
+        'names': ['time_stamp', 'wb_name', 'status'],
         'sep': '\t'
     }
     return pd.read_csv(**kwargs)

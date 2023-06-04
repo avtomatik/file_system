@@ -1,12 +1,13 @@
 import datetime
 import io
 import os
-import re
 import shutil
 from os.path import splitext
 from pathlib import Path
 
 from constants import LATIN_SUBSTITUTION
+
+from python.strings.src.lib import trim_string
 
 MAP_CYRILLIC_TO_LATIN = {
     chr(_): latin for _, latin in enumerate(LATIN_SUBSTITUTION.split(","), start=1072)
@@ -24,10 +25,6 @@ def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
     )
 
 
-def trim_string(string: str, fill: str = ' ') -> str:
-    return fill.join(filter(bool, re.split(r'\W', string)))
-
-
 def trim_file_name(file_name: str) -> str:
     _file_name = ''.join(
         (trim_string(splitext(file_name)[0], '_').lower(),
@@ -36,8 +33,10 @@ def trim_file_name(file_name: str) -> str:
     return transliterate('_'.join(p for p in _file_name.split('_') if p))
 
 
-def get_file_names(matchers):
-    return [name for name in tuple(os.listdir()) if any(match in name for match in matchers)]
+def get_file_names(matchers: tuple[str]) -> list[str]:
+    return [
+        file_name for file_name in tuple(os.listdir()) if any(match in file_name for match in matchers)
+    ]
 
 
 def copy_rename_files(dir_from: str, dir_to: str, file_names: tuple[str]) -> None:
@@ -76,8 +75,11 @@ def copy_rename_files(dir_from: str, dir_to: str, file_names: tuple[str]) -> Non
                 'to': trim_file_name(file_name),
             }
         )
-    # with open(Path(PATH_LOG).joinpath(FILE_NAME_LOG), 'w') as f:
+
+    # filepath = Path(PATH_LOG).joinpath(FILE_NAME_LOG)
+    # with open(filepath, 'w') as f:
     #     json.dump(LOG, f, ensure_ascii=False)
+
     print(f'Moved {len(LOG)} Files')
 
 
@@ -127,3 +129,26 @@ def text_file_to_set(file_name: str) -> set:
 
 def get_file_names_set(path):
     return {file_name.lower() for file_name in os.listdir(path)}
+
+
+def files_mirroring(paths: tuple[str], file_names: tuple[str]) -> None:
+    file_names_one = get_set_from_text_file(file_names[0])
+    file_names_two = get_set_from_text_file(file_names[1])
+
+    file_names_diff = file_names_one - file_names_two
+
+    for file_name in file_names_diff:
+        shutil.copy2(
+            Path(paths[0]).joinpath(file_name),
+            Path(paths[1]).joinpath(file_name)
+        )
+        print(f'Copied {file_name}')
+
+    file_names_diff = file_names_two - file_names_one
+
+    for file_name in file_names_diff:
+        shutil.copy2(
+            Path(paths[1]).joinpath(file_name),
+            Path(paths[0]).joinpath(file_name)
+        )
+        print(f'Copied {file_name}')
