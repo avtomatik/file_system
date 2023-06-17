@@ -11,7 +11,7 @@ from pathlib import Path
 from lib import get_file_names_set
 
 PATHS = (
-    'D:',
+    '/media/green-machine/KINGSTON',
     'E:',
 )
 

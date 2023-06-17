@@ -4,24 +4,20 @@ import os
 
 from lib import delete_files, move_files, rename_files
 
-FILE_NAMES = ('test.py')
+FILE_NAMES = ['test.py']
 FILE_NAMES = (
     'incompleteDataFusionUSACostIndex.py', 'incompletedataFetchCAN.py', 'incompleteDFT.py', 'incompleteUSABLSV.py'
 )
 
 PATH_SRC = '/Users/alexandermikhailov/Documents'
-delete_files(FILE_NAMES, PATH_SRC)
 PATH_SRC = '/Volumes/NO NAME'
-delete_files(FILE_NAMES, PATH_SRC)
 PATH_SRC = '/Volumes/NO NAME 1'
 delete_files(FILE_NAMES, PATH_SRC)
 
 
 PATH_SRC = '/Users/alexandermikhailov/Documents'
-rename_files(FILE_NAMES, PATH_SRC)
-PATH_SRC = '/Volumes/NO NAME 1'
-rename_files(FILE_NAMES, PATH_SRC)
 PATH_SRC = '/Volumes/NO NAME'
+PATH_SRC = '/Volumes/NO NAME 1'
 rename_files(FILE_NAMES, PATH_SRC)
 
 

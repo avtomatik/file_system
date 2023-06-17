@@ -1,17 +1,17 @@
 import datetime
 import io
 import os
+import re
 import shutil
-from os.path import splitext
 from pathlib import Path
 
-from constants import LATIN_SUBSTITUTION
+from core.constants import MAP_CYRILLIC_TO_LATIN
 
-from python.strings.src.lib import trim_string
+# from strings.src.lib import trim_string
 
-MAP_CYRILLIC_TO_LATIN = {
-    chr(_): latin for _, latin in enumerate(LATIN_SUBSTITUTION.split(","), start=1072)
-}
+
+def trim_string(string: str, fill: str = ' ') -> str:
+    return fill.join(filter(bool, re.split(r'\W', string)))
 
 
 def get_set_from_text_file(file_name: str) -> set:
@@ -26,11 +26,8 @@ def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
 
 
 def trim_file_name(file_name: str) -> str:
-    _file_name = ''.join(
-        (trim_string(splitext(file_name)[0], '_').lower(),
-         splitext(file_name)[1].lower(),)
-    )
-    return transliterate('_'.join(p for p in _file_name.split('_') if p))
+    _file_name = f"{trim_string(Path(file_name).stem, '_')}{Path(file_name).suffix}"
+    return transliterate('_'.join(filter(bool, _file_name.lower().split('_'))))
 
 
 def get_file_names(matchers: tuple[str]) -> list[str]:

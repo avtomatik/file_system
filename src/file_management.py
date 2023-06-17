@@ -8,12 +8,12 @@ Created on Sun Jun 19 17:06:20 2022
 
 import os
 
-from lib import copy_rename_files
+from core.lib import copy_rename_files
 
 if __name__ == '__main__':
     paths = ()
-    MATCHERS = ('.csv',)
-    PATH_SRC = '/home/green-machine/Downloads'
+    MATCHERS = ['.csv']
+    PATH_SRC = '/home/green-machine/books'
 
     FLAG = ''
 

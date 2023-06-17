@@ -13,7 +13,7 @@ from pathlib import Path
 # Script to Back-Up Empty Files from One Drive to Another
 # =============================================================================
 PATHS = (
-    'D:',
+    '/media/green-machine/KINGSTON',
     'E:',
 )
 
@@ -26,17 +26,13 @@ empty_files_list.remove('FOUND.000')
 empty_files_list.remove('System Volume Information')
 
 for file_name in empty_files_list:
-    if os.path.exists(Path(PATHS[0]).joinpath(file_name)):
+    if Path(PATHS[0]).joinpath(file_name).exists():
         shutil.copy2(
             Path(PATHS[0]).joinpath(file_name),
             Path(PATHS[1]).joinpath(file_name)
         )
         print(f'Copied {file_name}')
 
-PATHS = (
-    'D:',
-    'E:',
-)
 
 files_list_d = {
     file_name.lower() for file_name in os.listdir(PATHS[0]) if not file_name.startswith(('.', '_', '~'))
@@ -63,10 +59,6 @@ def get_file_names(directory: str) -> set[str]:
     }
 
 
-PATHS = (
-    'D:',
-    'E:',
-)
 file_names_d = get_file_names('list_d.txt')
 file_names_e = get_file_names('list_e.txt')
 
@@ -78,19 +70,19 @@ set_difference = file_names_d - file_names_e
 
 for file_name in set_difference:
     shutil.copy2(
-        Path('D:').joinpath(file_name),
+        Path('/media/green-machine/KINGSTON').joinpath(file_name),
         Path('E:').joinpath(file_name)
     )
-    print(f'Copied <{file_name}> from D: to E:')
+    print(f'Copied <{file_name}> from /media/green-machine/KINGSTON to E:')
 
 set_difference = file_names_e - file_names_d
 
 for file_name in set_difference:
     shutil.copy2(
         Path('E:').joinpath(file_name),
-        Path('D:').joinpath(file_name)
+        Path('/media/green-machine/KINGSTON').joinpath(file_name)
     )
-    print(f'Copied <{file_name}> from E: to D:')
+    print(f'Copied <{file_name}> from E: to /media/green-machine/KINGSTON')
 
 for file_name in file_names_d - file_names_e:
     print(file_name)
