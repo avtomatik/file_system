@@ -11,19 +11,22 @@ def incoherent_undefined():
     FILE_NAME = 'pricesInverse.xlsm'
 
     PATH = '/media/green-machine/KINGSTON'
-    shutil.copy(
+    shutil.copy2(
         Path(PATH_BASE).joinpath(FILE_NAME),
         Path(PATH).joinpath(FILE_NAME)
     )
 
-    shutil.copy(
+    PATH_EXP = 'E:'
+    shutil.copy2(
         Path(PATH_BASE).joinpath(FILE_NAME),
-        Path('E:').joinpath(FILE_NAME)
+        Path(PATH_EXP).joinpath(FILE_NAME)
     )
 
+    PATH_SRC = 'C:\\Users\\Mastermind\\Desktop'
+    PATH_EXP = 'C:\\Projects'
     shutil.move(
-        Path('C:\\Users\\Mastermind\\Desktop').joinpath(FILE_NAME),
-        Path('C:\\Projects').joinpath(FILE_NAME)
+        Path(PATH_SRC).joinpath(FILE_NAME),
+        Path(PATH_EXP).joinpath(FILE_NAME)
     )
 
     shutil.make_archive(

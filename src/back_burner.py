@@ -5,7 +5,7 @@
 import os
 
 import pandas as pd
-from lib import trim_file_name
+from core.lib import trim_file_name
 from pandas import DataFrame
 
 # =============================================================================

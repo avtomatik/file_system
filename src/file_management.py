@@ -13,7 +13,7 @@ from core.lib import copy_rename_files
 if __name__ == '__main__':
     paths = ()
     MATCHERS = ['.csv']
-    PATH_SRC = '/home/green-machine/books'
+    PATH_SRC = '/home/green-machine/Downloads'
 
     FLAG = ''
 

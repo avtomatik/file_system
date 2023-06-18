@@ -2,7 +2,7 @@
 
 import os
 
-from lib import delete_files, move_files, rename_files
+from core.lib import delete_files, move_files, rename_files
 
 FILE_NAMES = ['test.py']
 FILE_NAMES = (
