@@ -46,16 +46,16 @@ for file_name in files_list_e - files_list_d:
 
 
 def get_file_names(file_name: str) -> set[str]:
-    with open(file_name, 'r') as source:
+    with open(file_name, 'r') as f:
         return {
-            _.rstrip().split('\\')[1] for _ in source.readlines()
+            _.rstrip().split('\\')[1] for _ in f.readlines()
             if not _.startswith(('.', '~'))
         }
 
 
-def get_file_names(directory: str) -> set[str]:
+def get_file_names(path: str) -> set[str]:
     return {
-        file_name.lower() for file_name in os.listdir(directory) if not file_name.startswith(('.', '_', '~'))
+        file_name.lower() for file_name in os.listdir(path) if not file_name.startswith(('.', '_', '~'))
     }
 
 

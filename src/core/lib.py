@@ -16,7 +16,7 @@ def trim_string(string: str, fill: str = ' ') -> str:
 
 def get_set_from_text_file(file_name: str) -> set:
     with io.open(file_name, mode='r', encoding='utf-8') as f:
-        return {line.rstrip().lower() for line in f.readlines()}
+        return set(map(str.lower, map(str.rstrip, f.readlines())))
 
 
 def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
@@ -119,13 +119,8 @@ def get_names(PATH_SRC):
     return map(lambda _: _[1:], os.walk(PATH_SRC))
 
 
-def text_file_to_set(file_name: str) -> set:
-    with io.open(file_name, mode='r', encoding='utf-8') as file:
-        return {line.rstrip().lower() for line in file.readlines()}
-
-
 def get_file_names_set(path):
-    return {file_name.lower() for file_name in os.listdir(path)}
+    return set(map(str.lower, os.listdir(path)))
 
 
 def files_mirroring(paths: tuple[str], file_names: tuple[str]) -> None:

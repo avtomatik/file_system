@@ -21,17 +21,18 @@ FILE_NAME = 'file_names.xlsx'
 # Iteration
 # =============================================================================
 with open(FILE_NAMES[0]) as f:
-    lines_d = [line.rstrip() for line in f]
+    lines_d = list(map(str.rstrip, f))
 
 with open(FILE_NAMES[1]) as f:
-    lines_e = [line.rstrip() for line in f]
+    lines_e = list(map(str.rstrip, f))
 
 pd.concat(
     [
         DataFrame(data={'lines_d': lines_d}),
         DataFrame(data={'lines_e': lines_e})
     ],
-    axis=0).to_excel(FILE_NAME)
+    axis=0
+).to_excel(FILE_NAME)
 
 # =============================================================================
 # Iteration
@@ -66,12 +67,15 @@ for file_name in MAP_RENAMING.keys():
     except:
         pass
 
+PATH_SRC = 'E'
+PATH_EXP = 'D'
+
 for _ in range(df.shape[0]):
-    if df.iloc[_, 0] == 'E TO D':
-        print('{} {}'.format(df.iloc[_, 1][3:], df.iloc[_, 2][3:]))
+    if df.iloc[_, 0] == f'{PATH_SRC} TO {PATH_EXP}':
+        print(f'{df.iloc[_, 1][3:]} {df.iloc[_, 2][3:]}')
         try:
             os.rename(df.iloc[_, 1][3:], df.iloc[_, 2][3:])
         except:
             pass
-    elif df.iloc[_, 0] == 'E TO D':
-        print('{} {}'.format(df.iloc[_, 2], df.iloc[_, 1]))
+    elif df.iloc[_, 0] == f'{PATH_EXP} TO {PATH_SRC}':
+        print(f'{df.iloc[_, 2]} {df.iloc[_, 1]}')
