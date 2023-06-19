@@ -9,16 +9,14 @@ import os
 import shutil
 from pathlib import Path
 
+from core.constants import PATH_EXP, PATH_SRC
+
 # =============================================================================
 # Script to Back-Up Empty Files from One Drive to Another
 # =============================================================================
-PATH_SRC = '/media/green-machine/KINGSTON'
-PATH_EXP = 'E:'
-
-os.chdir(PATH_EXP)
 
 empty_files_list = [
-    file_name for file_name in os.listdir() if os.path.getsize(file_name) == 0
+    file_name for file_name in os.listdir(PATH_EXP) if os.path.getsize(file_name) == 0
 ]
 empty_files_list.remove('FOUND.000')
 empty_files_list.remove('System Volume Information')

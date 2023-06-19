@@ -6,13 +6,14 @@ Created on Sun Jun 18 22:51:34 2023
 @author: green-machine
 """
 
+import datetime
 import io
 import os
+import re
 import shutil
 from pathlib import Path
 
-from core.constants import PREFIXES
-from core.lib import get_file_names_set
+from core.constants import MAP_CYRILLIC_TO_LATIN
 
 # def get_set_from_text_file(file_name: str) -> set[str]:
 #     with open(file_name, 'r') as f:
@@ -20,6 +21,12 @@ from core.lib import get_file_names_set
 #             _.rstrip().split('\\')[1] for _ in f.readlines()
 #             if not _.startswith(PREFIXES)
 #         }
+
+
+# def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
+#     return [
+#         file_name for file_name in tuple(os.listdir(path)) if any(match in file_name for match in matchers)
+#     ]
 
 
 def get_set_from_text_file(file_name: str) -> set:
@@ -31,91 +38,135 @@ def get_file_names_filter(prefixes: tuple[str], path: str = None) -> set[str]:
     return set(filter(lambda _: not _.startswith(prefixes), map(str.lower, os.listdir(path))))
 
 
-PATH_SRC = '/media/green-machine/KINGSTON'
-PATH_EXP = 'E:'
-
-FILE_NAME_L = 'list_d.txt'
-FILE_NAME_R = 'list_e.txt'
+def trim_string(string: str, fill: str = ' ') -> str:
+    return fill.join(filter(bool, re.split(r'\W', string)))
 
 
-def files_mirroring(paths: tuple[str], file_names: tuple[str]) -> None:
-    # =========================================================================
-    # TODO: Review the Logic
-    # =========================================================================
-    file_names_l = get_set_from_text_file(file_names[0])
-    file_names_r = get_set_from_text_file(file_names[1])
-
-    for file_name in file_names_l - file_names_r:
-        shutil.copy2(
-            Path(paths[0]).joinpath(file_name),
-            Path(paths[1]).joinpath(file_name)
-        )
-        print(f'Copied <{file_name}> from {paths[0]} to {paths[1]}')
-
-    for file_name in file_names_r - file_names_l:
-        shutil.copy2(
-            Path(paths[1]).joinpath(file_name),
-            Path(paths[0]).joinpath(file_name)
-        )
-        print(f'Copied <{file_name}> from {paths[1]} to {paths[0]}')
-
-
-def files_mirroring(PATH_SRC, PATH_EXP):
-    # =========================================================================
-    # TODO: Review the Logic
-    # =========================================================================
-    file_names_l = get_file_names_set(PATH_SRC)
-    file_names_r = get_file_names_set(PATH_EXP)
-
-    file_names_diff = set(
-        filter(
-            lambda _: not _.startswith(PREFIXES),
-            file_names_l - file_names_r
-        )
+def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
+    return ''.join(
+        mapping[_.lower()] if _.lower() in mapping.keys() else _ for _ in word
     )
 
-    for file_name in file_names_diff:
+
+def trim_file_name(file_name: str) -> str:
+    _file_name = f"{trim_string(Path(file_name).stem, '_')}{Path(file_name).suffix}"
+    return transliterate('_'.join(filter(bool, _file_name.lower().split('_'))))
+
+
+def copy_rename_files(path_from: str, path_to: str, file_names: tuple[str]) -> None:
+    """
+    Copies <shutil.copy2> or Moves <shutil.move> Files
+    Parameters
+    ----------
+    path_from : str
+        Source Directory.
+    path_to : str
+        Destination Directory.
+    file_names : tuple[str]
+        File Names Set.
+    Returns
+    -------
+    None
+    """
+    os.chdir(path_from)
+    PATH_LOG = '/home/green-machine/Downloads'
+    FILE_NAME_LOG = f'log_{datetime.datetime.today()}.txt'.replace(' ', '_')
+    LOG = []
+    for file_name in file_names:
+        try:
+            shutil.move(
+                Path(path_from).joinpath(file_name),
+                Path(path_to).joinpath(trim_file_name(file_name))
+            )
+        except:
+            pass
+        # =====================================================================
+        # Logging
+        # =====================================================================
+        LOG.append(
+            {
+                'from': file_name,
+                'to': trim_file_name(file_name),
+            }
+        )
+
+    # filepath = Path(PATH_LOG).joinpath(FILE_NAME_LOG)
+    # with open(filepath, 'w') as f:
+    #     json.dump(LOG, f, ensure_ascii=False)
+
+    print(f'Moved {len(LOG)} Files')
+
+
+def delete_files(file_names: tuple[str], path: str) -> None:
+    for file_name in file_names:
+        os.unlink(Path(path).joinpath(file_name))
+
+    print(f'{path}: Done')
+
+
+def rename_files(mapping: dict[str, str], path: str) -> None:
+    for fn_in, fn_ut in mapping.items():
+        os.rename(
+            Path(path).joinpath(fn_in),
+            Path(path).joinpath(fn_ut)
+        )
+
+    print(f'{path}: Done')
+
+
+def move_files(file_names: tuple[str], path_from: str, path_to: str) -> None:
+    path_from = '/Users/alexandermikhailov/Documents'
+    path_to = '/Volumes/NO NAME/'
+    path_to = '/Volumes/NO NAME 1/'
+    os.chdir(path_from)
+    for file_name in file_names:
         shutil.copy2(
-            Path(PATH_SRC).joinpath(file_name),
-            Path(PATH_EXP).joinpath(file_name)
+            Path(path_from).joinpath(file_name),
+            Path(path_to).joinpath(file_name)
         )
-        print(f'Copied <{file_name}> from {PATH_SRC} to {PATH_EXP}')
-
-    file_names_diff = set(
-        filter(
-            lambda _: not _.startswith(PREFIXES),
-            file_names_r - file_names_l
+        shutil.move(
+            Path(path_from).joinpath(file_name),
+            Path(path_to).joinpath(file_name)
         )
-    )
 
-    for file_name in file_names_diff:
-        shutil.copy2(
-            Path(PATH_EXP).joinpath(file_name),
-            Path(PATH_SRC).joinpath(file_name)
-        )
-        print(f'Copied <{file_name}> from {PATH_EXP} to {PATH_SRC}')
+    print('Done')
 
 
-def files_mirroring(PATH_SRC, PATH_EXP, FILE_NAME_L, FILE_NAME_R):
+def get_names_walk(PATH_SRC):
+    return map(lambda _: _[1:], os.walk(PATH_SRC))
+
+
+def get_file_names_set(path):
+    return set(map(str.lower, os.listdir(path)))
+
+
+def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
+    """
+    Comprehension Filter for Files in Folder
+    Parameters
+    ----------
+        matchers : tuple[str]
+    Returns
+    -------
+        list[str]
+    """
     # =========================================================================
-    # TODO: Review the Logic
+    # TODO: any OR all
     # =========================================================================
-    file_names_l = get_set_from_text_file(FILE_NAME_L)
-    file_names_r = get_set_from_text_file(FILE_NAME_R)
+    return [
+        file_name for file_name in os.listdir(path) if all(match in file_name for match in matchers)
+    ]
 
-    file_names_l = get_file_names_filter(PREFIXES, PATH_SRC)
-    file_names_r = get_file_names_filter(PREFIXES, PATH_EXP)
 
-    for file_name in file_names_l - file_names_r:
-        shutil.copy2(
-            Path(PATH_SRC).joinpath(file_name),
-            Path(PATH_EXP).joinpath(file_name)
-        )
-        print(f'Copied <{file_name}> from {PATH_SRC} to {PATH_EXP}')
+# =============================================================================
+# Iteration
+# =============================================================================
 
-    for file_name in file_names_r - file_names_l:
-        shutil.copy2(
-            Path(PATH_EXP).joinpath(file_name),
-            Path(PATH_SRC).joinpath(file_name)
-        )
-        print(f'Copied <{file_name}> from {PATH_EXP} to {PATH_SRC}')
+
+def get_string_from_file(file_name: str) -> list[str]:
+    with open(file_name) as f:
+        return list(map(str.rstrip, f))
+
+
+def filter_file_names(not_string: str) -> tuple[str]:
+    return tuple(filter(lambda _: _ != not_string, os.listdir()))

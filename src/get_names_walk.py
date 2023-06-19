@@ -7,7 +7,7 @@ Created on Mon Oct 24 20:37:25 2022
 """
 
 
-from core.lib import get_names_walk
+from core.funcs import get_names_walk
 
 PATH_SRC = '/home/green-machine/production'
 PATH_EXP = '/home/green-machine/web'
