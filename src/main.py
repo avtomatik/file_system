@@ -11,7 +11,6 @@ import os
 from core.funcs import copy_rename_files
 
 if __name__ == '__main__':
-    paths = ()
 
     PATH_SRC = '/home/green-machine/Downloads'
 

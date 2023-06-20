@@ -6,7 +6,6 @@ from core.constants import PREFIXES
 
 PATH_SRC = '/media/green-machine/Transcend'
 PATH_EXP = '/home/green-machine/Downloads'
-SUFFIX = ''
 SUFFIX = '.py'
 
 

@@ -29,17 +29,105 @@ from core.constants import MAP_CYRILLIC_TO_LATIN
 #     ]
 
 
-def get_set_from_text_file(file_name: str) -> set:
-    with io.open(file_name, mode='r', encoding='utf-8') as f:
-        return set(map(str.lower, map(str.rstrip, f.readlines())))
+def copy2_files(file_names: tuple[str], path_from: str, path_to: str) -> None:
+
+    for file_name in file_names:
+        shutil.copy2(
+            Path(path_from).joinpath(file_name),
+            Path(path_to).joinpath(file_name)
+        )
+        print(f'Copied <{file_name}> from {path_from} to {path_to}')
+
+
+def get_all_files_except(string: str) -> tuple[str]:
+    return tuple(filter(lambda _: _ != string, os.listdir()))
+
+
+def get_camel_to_snake_map(strings: tuple[str]) -> dict[str, str]:
+    return dict(
+        zip(
+            strings,
+            map(
+                str.lower,
+                map(
+                    # =========================================================
+                    # TODO: Figure Out How It Works
+                    # =========================================================
+                    lambda _: re.sub(r'(?<!^)(?=[A-Z])', '_', _),
+                    strings
+                )
+            )
+        )
+    )
 
 
 def get_file_names_filter(prefixes: tuple[str], path: str = None) -> set[str]:
     return set(filter(lambda _: not _.startswith(prefixes), map(str.lower, os.listdir(path))))
 
 
-def trim_string(string: str, fill: str = ' ') -> str:
-    return fill.join(filter(bool, re.split(r'\W', string)))
+def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
+    """
+    Comprehension Filter for Files in Folder
+    Parameters
+    ----------
+        matchers : tuple[str]
+    Returns
+    -------
+        list[str]
+    """
+    # =========================================================================
+    # TODO: any OR all
+    # =========================================================================
+    return [
+        file_name for file_name in os.listdir(path) if all(match in file_name for match in matchers)
+    ]
+
+
+def get_file_names_set(path):
+    return set(map(str.lower, os.listdir(path)))
+
+
+def get_names_walk(path):
+    return map(lambda _: _[1:], os.walk(path))
+
+
+def get_string_from_file(file_name: str) -> list[str]:
+    with open(file_name) as f:
+        return list(map(str.rstrip, f))
+
+
+def get_set_from_text_file(file_name: str) -> set:
+    with io.open(file_name, mode='r', encoding='utf-8') as f:
+        return set(map(str.lower, map(str.rstrip, f.readlines())))
+
+
+def move_files(file_names: tuple[str], path_from: str, path_to: str) -> None:
+
+    for file_name in file_names:
+        shutil.move(
+            Path(path_from).joinpath(file_name),
+            Path(path_to).joinpath(file_name)
+        )
+        print(f'Moved <{file_name}> from {path_from} to {path_to}')
+
+
+def rename_files(mapping: dict[str, str], path: str) -> None:
+
+    for fn_in, fn_ut in mapping.items():
+        os.rename(
+            Path(path).joinpath(fn_in),
+            Path(path).joinpath(fn_ut)
+        )
+
+    print(f'{path}: Done')
+
+
+def unlink_files(file_names: tuple[str], path: str) -> None:
+
+    for file_name in file_names:
+        os.unlink(Path(path).joinpath(file_name))
+
+    print(f'{path}: Done')
 
 
 def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
@@ -51,6 +139,10 @@ def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
 def trim_file_name(file_name: str) -> str:
     _file_name = f"{trim_string(Path(file_name).stem, '_')}{Path(file_name).suffix}"
     return transliterate('_'.join(filter(bool, _file_name.lower().split('_'))))
+
+
+def trim_string(string: str, fill: str = ' ') -> str:
+    return fill.join(filter(bool, re.split(r'\W', string)))
 
 
 def copy_rename_files(path_from: str, path_to: str, file_names: tuple[str]) -> None:
@@ -73,100 +165,24 @@ def copy_rename_files(path_from: str, path_to: str, file_names: tuple[str]) -> N
     FILE_NAME_LOG = f'log_{datetime.datetime.today()}.txt'.replace(' ', '_')
     LOG = []
     for file_name in file_names:
-        try:
+        if Path(path_from).joinpath(file_name).exists():
             shutil.move(
                 Path(path_from).joinpath(file_name),
                 Path(path_to).joinpath(trim_file_name(file_name))
             )
-        except:
-            pass
-        # =====================================================================
-        # Logging
-        # =====================================================================
-        LOG.append(
-            {
-                'from': file_name,
-                'to': trim_file_name(file_name),
-            }
-        )
+
+            # =====================================================================
+            # Logging
+            # =====================================================================
+            LOG.append(
+                {
+                    'from': file_name,
+                    'to': trim_file_name(file_name),
+                }
+            )
 
     # filepath = Path(PATH_LOG).joinpath(FILE_NAME_LOG)
     # with open(filepath, 'w') as f:
     #     json.dump(LOG, f, ensure_ascii=False)
 
     print(f'Moved {len(LOG)} Files')
-
-
-def delete_files(file_names: tuple[str], path: str) -> None:
-    for file_name in file_names:
-        os.unlink(Path(path).joinpath(file_name))
-
-    print(f'{path}: Done')
-
-
-def rename_files(mapping: dict[str, str], path: str) -> None:
-    for fn_in, fn_ut in mapping.items():
-        os.rename(
-            Path(path).joinpath(fn_in),
-            Path(path).joinpath(fn_ut)
-        )
-
-    print(f'{path}: Done')
-
-
-def move_files(file_names: tuple[str], path_from: str, path_to: str) -> None:
-    path_from = '/Users/alexandermikhailov/Documents'
-    path_to = '/Volumes/NO NAME/'
-    path_to = '/Volumes/NO NAME 1/'
-    os.chdir(path_from)
-    for file_name in file_names:
-        shutil.copy2(
-            Path(path_from).joinpath(file_name),
-            Path(path_to).joinpath(file_name)
-        )
-        shutil.move(
-            Path(path_from).joinpath(file_name),
-            Path(path_to).joinpath(file_name)
-        )
-
-    print('Done')
-
-
-def get_names_walk(PATH_SRC):
-    return map(lambda _: _[1:], os.walk(PATH_SRC))
-
-
-def get_file_names_set(path):
-    return set(map(str.lower, os.listdir(path)))
-
-
-def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
-    """
-    Comprehension Filter for Files in Folder
-    Parameters
-    ----------
-        matchers : tuple[str]
-    Returns
-    -------
-        list[str]
-    """
-    # =========================================================================
-    # TODO: any OR all
-    # =========================================================================
-    return [
-        file_name for file_name in os.listdir(path) if all(match in file_name for match in matchers)
-    ]
-
-
-# =============================================================================
-# Iteration
-# =============================================================================
-
-
-def get_string_from_file(file_name: str) -> list[str]:
-    with open(file_name) as f:
-        return list(map(str.rstrip, f))
-
-
-def filter_file_names(not_string: str) -> tuple[str]:
-    return tuple(filter(lambda _: _ != not_string, os.listdir()))
