@@ -16,7 +16,7 @@ from pathlib import Path
 from core.constants import MAP_CYRILLIC_TO_LATIN
 
 # def get_set_from_text_file(file_name: str) -> set[str]:
-#     with open(file_name, 'r') as f:
+#     with open(file_name) as f:
 #         return {
 #             _.rstrip().split('\\')[1] for _ in f.readlines()
 #             if not _.startswith(PREFIXES)
@@ -97,7 +97,7 @@ def get_string_from_file(file_name: str) -> list[str]:
 
 
 def get_set_from_text_file(file_name: str) -> set:
-    with io.open(file_name, mode='r', encoding='utf-8') as f:
+    with io.open(file_name, encoding='utf-8') as f:
         return set(map(str.lower, map(str.rstrip, f.readlines())))
 
 
@@ -125,7 +125,7 @@ def rename_files(mapping: dict[str, str], path: str) -> None:
 def unlink_files(file_names: tuple[str], path: str) -> None:
 
     for file_name in file_names:
-        os.unlink(Path(path).joinpath(file_name))
+        Path(path).joinpath(file_name).unlink()
 
     print(f'{path}: Done')
 
