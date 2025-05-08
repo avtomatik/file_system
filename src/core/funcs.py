@@ -6,7 +6,6 @@ Created on Sun Jun 18 22:51:34 2023
 @author: green-machine
 """
 
-import datetime
 import io
 import os
 import re
@@ -29,14 +28,14 @@ from core.constants import MAP_CYRILLIC_TO_LATIN
 #     ]
 
 
-def copy2_files(file_names: tuple[str], path_from: str, path_to: str) -> None:
+def copy2_files(file_names: tuple[str], path_src: str, path_dst: str) -> None:
 
     for file_name in file_names:
         shutil.copy2(
-            Path(path_from).joinpath(file_name),
-            Path(path_to).joinpath(file_name)
+            path_src.joinpath(file_name),
+            path_dst.joinpath(file_name)
         )
-        print(f'Copied <{file_name}> from {path_from} to {path_to}')
+        print(f'Copied <{file_name}> from {path_src} to {path_dst}')
 
 
 def get_all_files_except(string: str) -> tuple[str]:
@@ -101,22 +100,22 @@ def get_set_from_text_file(file_name: str) -> set:
         return set(map(str.lower, map(str.rstrip, f.readlines())))
 
 
-def move_files(file_names: tuple[str], path_from: str, path_to: str) -> None:
+def move_files(file_names: tuple[str], path_src: str, path_dst: str) -> None:
 
     for file_name in file_names:
         shutil.move(
-            Path(path_from).joinpath(file_name),
-            Path(path_to).joinpath(file_name)
+            path_src.joinpath(file_name),
+            path_dst.joinpath(file_name)
         )
-        print(f'Moved <{file_name}> from {path_from} to {path_to}')
+        print(f'Moved <{file_name}> from {path_src} to {path_dst}')
 
 
 def rename_files(mapping: dict[str, str], path: str) -> None:
 
     for fn_in, fn_ut in mapping.items():
         os.rename(
-            Path(path).joinpath(fn_in),
-            Path(path).joinpath(fn_ut)
+            path.joinpath(fn_in),
+            path.joinpath(fn_ut)
         )
 
     print(f'{path}: Done')
@@ -125,7 +124,7 @@ def rename_files(mapping: dict[str, str], path: str) -> None:
 def unlink_files(file_names: tuple[str], path: str) -> None:
 
     for file_name in file_names:
-        Path(path).joinpath(file_name).unlink()
+        path.joinpath(file_name).unlink()
 
     print(f'{path}: Done')
 
@@ -145,7 +144,7 @@ def trim_string(string: str, fill: str = ' ') -> str:
     return fill.join(filter(bool, re.split(r'\W', string)))
 
 
-def copy_rename_files(path_from: str, path_to: str, file_names: tuple[str]) -> None:
+def copy_rename_files(path_src: str, path_dst: str, file_names: tuple[str]) -> None:
     """
     Copies <shutil.copy2> or Moves <shutil.move> Files
     Parameters
@@ -160,15 +159,13 @@ def copy_rename_files(path_from: str, path_to: str, file_names: tuple[str]) -> N
     -------
     None
     """
-    os.chdir(path_from)
-    PATH_LOG = '/home/green-machine/Downloads'
-    FILE_NAME_LOG = f'log_{datetime.datetime.today()}.txt'.replace(' ', '_')
+    os.chdir(path_src)
     LOG = []
     for file_name in file_names:
-        if Path(path_from).joinpath(file_name).exists():
+        if path_src.joinpath(file_name).exists():
             shutil.move(
-                Path(path_from).joinpath(file_name),
-                Path(path_to).joinpath(trim_file_name(file_name))
+                path_src.joinpath(file_name),
+                path_dst.joinpath(trim_file_name(file_name))
             )
 
             # =====================================================================

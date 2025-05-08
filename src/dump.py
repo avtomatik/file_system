@@ -8,11 +8,12 @@
 import os
 
 import pandas as pd
+from file_system.src.core.funcs import get_string_from_file
 from pandas import DataFrame
 
-from core.constants import FILE_NAME_L, FILE_NAME_R, PATH_EXP, PATH_SRC
+from core.config import PATH_DST, PATH_SRC, PATH_TST
+from core.constants import FILE_NAME_L, FILE_NAME_R
 from core.funcs import trim_file_name
-from file_system.src.core.funcs import get_string_from_file
 
 FILE_NAME = 'file_names.xlsx'
 
@@ -58,11 +59,11 @@ for file_name in MAP_RENAMING.keys():
         pass
 
 for _ in range(df.shape[0]):
-    if df.iloc[_, 0] == f'{PATH_EXP} TO {PATH_SRC}':
+    if df.iloc[_, 0] == f'{PATH_TST} TO {PATH_SRC}':
         print(f'{df.iloc[_, 1][3:]} {df.iloc[_, 2][3:]}')
         try:
             os.rename(df.iloc[_, 1][3:], df.iloc[_, 2][3:])
         except Exception:
             pass
-    elif df.iloc[_, 0] == f'{PATH_SRC} TO {PATH_EXP}':
+    elif df.iloc[_, 0] == f'{PATH_SRC} TO {PATH_DST}':
         print(f'{df.iloc[_, 2]} {df.iloc[_, 1]}')

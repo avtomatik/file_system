@@ -3,13 +3,15 @@
 
 
 import os
-from pathlib import Path, PosixPath
+from pathlib import Path
 
 import pandas as pd
 from pandas import DataFrame
 
+from core.config import PATH
 
-def read(filepath: PosixPath) -> DataFrame:
+
+def read(filepath: Path) -> DataFrame:
     kwargs = {
         'filepath_or_buffer': filepath,
         'names': ['time_stamp', 'wb_name', 'status'],
@@ -26,19 +28,15 @@ def mark_df(df: DataFrame) -> DataFrame:
 
 if __name__ == '__main__':
 
-    PATH_SRC = '/home/green-machine/source'
-
-    PATH_EXP = '/home/green-machine/Downloads'
-
     FILE_NAME = 'files_check.txt'
 
-    FILEPATH = Path(PATH_EXP).joinpath(FILE_NAME)
+    file_path = PATH.joinpath(FILE_NAME)
 
-    df = read(FILEPATH).pipe(mark_df)
+    df = read(file_path).pipe(mark_df)
 
     for _ in range(df.shape[0]):
 
-        filepath = Path(PATH_SRC).joinpath(df.iloc[_, 1])
+        filepath = PATH.joinpath(df.iloc[_, 1])
 
         if filepath.exists():
             df.iloc[_, -2] = filepath.is_file()
@@ -47,7 +45,7 @@ if __name__ == '__main__':
     FILE_NAME = 'files_check_report.xlsx'
 
     kwargs = {
-        'excel_writer': Path(PATH_EXP).joinpath(FILE_NAME),
+        'excel_writer': PATH.joinpath(FILE_NAME),
         'index': False
     }
     df.to_excel(**kwargs)
