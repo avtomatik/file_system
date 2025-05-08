@@ -9,7 +9,7 @@ Created on Sun Jun 19 17:06:20 2022
 from pathlib import Path
 
 from core.config import PATH
-from core.funcs import copy_rename_files
+from core.funcs import move_and_rename_files
 
 MATCHERS = ('.csv',)
 MATCHERS = ('',)
@@ -32,4 +32,4 @@ if __name__ == '__main__':
         'file_names': file_names,
     }
 
-    copy_rename_files(**kwargs)
+    move_and_rename_files(**kwargs)

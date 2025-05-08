@@ -7,12 +7,14 @@ Created on Sun Jun 18 22:51:34 2023
 """
 
 import io
+import json
 import os
 import re
 import shutil
 from pathlib import Path
 
-from core.constants import MAP_CYRILLIC_TO_LATIN
+from core.config import PATH_LOG
+from core.constants import FILE_NAME_LOG, MAP_CYRILLIC_TO_LATIN
 
 # def get_set_from_text_file(file_name: str) -> set[str]:
 #     with open(file_name) as f:
@@ -144,42 +146,55 @@ def trim_string(string: str, fill: str = ' ') -> str:
     return fill.join(filter(bool, re.split(r'\W', string)))
 
 
-def copy_rename_files(path_src: Path, path_dst: Path, file_names: tuple[str]) -> None:
+def move_and_rename_files(
+    path_src: Path,
+    path_dst: Path,
+    file_names: tuple[str]
+) -> None:
     """
-    Copies <shutil.copy2> or Moves <shutil.move> Files
+    Moves files from one to another folder with renamed filenames.
+
     Parameters
     ----------
-    path_from : str
-        Source Directory.
-    path_to : str
-        Destination Directory.
+    path_src : Path
+        Source Directory Path.
+    path_dst : Path
+        Destination Directory Path.
     file_names : tuple[str]
-        File Names Set.
+        File Names to Move and Rename.
+
     Returns
     -------
     None
+        Nothing.
+
     """
-    os.chdir(path_src)
-    LOG = []
+
+    logs = []
+
     for file_name in file_names:
-        if path_src.joinpath(file_name).exists():
-            shutil.move(
-                path_src.joinpath(file_name),
-                path_dst.joinpath(trim_file_name(file_name))
-            )
+        name_src = path_src.joinpath(file_name)
 
-            # =====================================================================
-            # Logging
-            # =====================================================================
-            LOG.append(
-                {
-                    'from': file_name,
-                    'to': trim_file_name(file_name),
-                }
-            )
+        if not name_src.exists():
+            continue
 
-    # file_path = PATH_LOG.joinpath(FILE_NAME_LOG)
-    # with open(file_path, 'w') as f:
-    #     json.dump(LOG, f, ensure_ascii=False)
+        name_new = trim_file_name(file_name)
+        name_dst = path_dst.joinpath(name_new)
 
-    print(f'Moved {len(LOG)} Files')
+        name_dst.parent.mkdir(parents=True, exist_ok=True)
+        name_src.rename(name_dst)
+
+        # =====================================================================
+        # Logging
+        # =====================================================================
+        if file_name != name_new:
+            logs.append({'src': file_name, 'dst': name_new})
+
+    if logs:
+        logs_path = PATH_LOG.joinpath(FILE_NAME_LOG)
+        with logs_path.open('w', encoding='utf-8') as f:
+            json.dump(logs, f, ensure_ascii=False, indent=4)
+
+        print(f'Renamed and Moved {len(logs)} Files')
+    else:
+        print('No Files Were Renamed')
