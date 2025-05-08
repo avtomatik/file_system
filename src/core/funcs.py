@@ -144,7 +144,7 @@ def trim_string(string: str, fill: str = ' ') -> str:
     return fill.join(filter(bool, re.split(r'\W', string)))
 
 
-def copy_rename_files(path_src: str, path_dst: str, file_names: tuple[str]) -> None:
+def copy_rename_files(path_src: Path, path_dst: Path, file_names: tuple[str]) -> None:
     """
     Copies <shutil.copy2> or Moves <shutil.move> Files
     Parameters
@@ -178,8 +178,8 @@ def copy_rename_files(path_src: str, path_dst: str, file_names: tuple[str]) -> N
                 }
             )
 
-    # filepath = Path(PATH_LOG).joinpath(FILE_NAME_LOG)
-    # with open(filepath, 'w') as f:
+    # file_path = PATH_LOG.joinpath(FILE_NAME_LOG)
+    # with open(file_path, 'w') as f:
     #     json.dump(LOG, f, ensure_ascii=False)
 
     print(f'Moved {len(LOG)} Files')
