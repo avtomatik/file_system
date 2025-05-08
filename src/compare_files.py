@@ -12,7 +12,7 @@ import shutil
 from hashlib import md5
 from pathlib import Path
 
-from core.config import PATH, BASE_DIR, PATH_CTR, PATH_TST
+from core.config import BASE_DIR, PATH, PATH_CTR, PATH_TST
 
 for file_name in os.listdir(PATH):
     if filecmp.cmp(
