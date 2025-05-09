@@ -56,12 +56,12 @@ for file_name in MAP_RENAMING.keys():
     except Exception:
         pass
 
-for _ in range(df.shape[0]):
-    if df.iloc[_, 0] == f'{PATH_TST} TO {PATH_SRC}':
-        print(f'{df.iloc[_, 1][3:]} {df.iloc[_, 2][3:]}')
+for idx, row in df.iterrows():
+    if row[0] == f'{PATH_TST} TO {PATH_SRC}':
+        print(f'{row[1][3:]} {row[2][3:]}')
         try:
-            os.rename(df.iloc[_, 1][3:], df.iloc[_, 2][3:])
+            os.rename(row[1][3:], row[2][3:])
         except Exception:
             pass
-    elif df.iloc[_, 0] == f'{PATH_SRC} TO {PATH_DST}':
-        print(f'{df.iloc[_, 2]} {df.iloc[_, 1]}')
+    elif row[0] == f'{PATH_SRC} TO {PATH_DST}':
+        print(f'{row[2]} {row[1]}')
