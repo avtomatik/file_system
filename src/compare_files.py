@@ -12,7 +12,7 @@ import shutil
 from hashlib import md5
 from pathlib import Path
 
-from core.config import BASE_DIR, PATH, PATH_CTR, PATH_TST
+from core.config import PATH, PATH_CTR, PATH_TST
 
 for file_name in os.listdir(PATH):
     if filecmp.cmp(
@@ -41,7 +41,7 @@ count = []
 
 for root, _, file_names in os.walk(
     (
-        BASE_DIR
+        PATH
         .joinpath('production')
         .joinpath('egida_ptv')
         .joinpath('lib')
@@ -53,15 +53,15 @@ for root, _, file_names in os.walk(
 print(sum(count))
 
 for (rt, _, fnames), (_rt, _, _fnames) in zip(
-    os.walk(BASE_DIR.joinpath('production').joinpath(
+    os.walk(PATH.joinpath('production').joinpath(
         'egida_ptv').joinpath('lib')),
-    os.walk(BASE_DIR.joinpath('web').joinpath(
+    os.walk(PATH.joinpath('web').joinpath(
         'egida_ptv').joinpath('lib'))
 ):
     for f, _f in zip(sorted(fnames), sorted(_fnames)):
         if filecmp.cmp(Path(rt).joinpath(f), Path(_rt).joinpath(_f)):
             Path(rt).joinpath(f).unlink()
 
-for rt, _, fnames in os.walk(BASE_DIR.joinpath('production')):
+for rt, _, fnames in os.walk(PATH.joinpath('production')):
     if not any(Path(rt).iterdir()):
         Path(rt).rmdir()

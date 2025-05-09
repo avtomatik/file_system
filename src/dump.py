@@ -8,12 +8,10 @@
 import os
 
 import pandas as pd
+
 from core.config import PATH_DST, PATH_SRC, PATH_TST
 from core.constants import FILE_NAME_L, FILE_NAME_R
-from core.funcs import trim_file_name
-from pandas import DataFrame
-
-from file_system.src.core.funcs import get_string_from_file
+from core.funcs import get_string_from_file, trim_file_name
 
 FILE_NAME = 'file_names.xlsx'
 
@@ -23,11 +21,11 @@ file_names_e = get_string_from_file(FILE_NAME_R)
 
 df = pd.concat(
     [
-        DataFrame(
+        pd.DataFrame(
             data={'file_names_d': file_names_d},
             columns=['file_names_d']
         ),
-        DataFrame(
+        pd.DataFrame(
             data={'file_names_e': file_names_e},
             columns=['file_names_e']
         )

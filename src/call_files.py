@@ -6,11 +6,11 @@ import os
 from pathlib import Path
 
 import pandas as pd
+
 from core.config import PATH
-from pandas import DataFrame
 
 
-def read(filepath: Path) -> DataFrame:
+def read(filepath: Path) -> pd.DataFrame:
     kwargs = {
         'filepath_or_buffer': filepath,
         'names': ['time_stamp', 'wb_name', 'status'],
@@ -19,7 +19,7 @@ def read(filepath: Path) -> DataFrame:
     return pd.read_csv(**kwargs)
 
 
-def mark_df(df: DataFrame) -> DataFrame:
+def mark_df(df: pd.DataFrame) -> pd.DataFrame:
     df['backed_up'] = False
     df['file_size'] = 0
     return df
