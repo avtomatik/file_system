@@ -12,11 +12,7 @@ from datetime import datetime
 from itertools import product
 from pathlib import Path
 
-DIR_CTRL = '/media/green-machine/321B-6A94/'
-DIR_DST = '/media/green-machine/5CED-666A/'
-DIR_DST = '/media/green-machine/Samsung USB/professional'
-DIR_SRC = '/home/green-machine/professional'
-DIR_TEST = '/media/green-machine/KINGSTON/'
+from core.config import PATH_CTR, PATH_DST, PATH_SRC, PATH_TST
 
 
 def get_creation_time(file_path: Path) -> datetime:
@@ -29,16 +25,10 @@ def copy_file(src: Path, dst: Path):
     dst.utime((src.stat().st_atime, src.stat().st_mtime))
 
 
-PATH_CTRL = Path(DIR_CTRL)
-PATH_DST = Path(DIR_DST)
-PATH_SRC = Path(DIR_SRC)
-PATH_TEST = Path(DIR_TEST)
-
-
-for file_name in sorted(set(PATH_CTRL.glob('*')) ^ set(PATH_TEST.glob('*'))):
-    file_ctrl = DIR_CTRL / file_name
-    file_test = DIR_TEST / file_name
-    file_dst = DIR_DST / file_name
+for file_name in sorted(set(PATH_CTR.glob('*')) ^ set(PATH_TST.glob('*'))):
+    file_ctrl = PATH_CTR / file_name
+    file_test = PATH_TST / file_name
+    file_dst = PATH_DST / file_name
 
     if file_ctrl.is_file():
         if get_creation_time(file_ctrl) <= get_creation_time(file_test):
