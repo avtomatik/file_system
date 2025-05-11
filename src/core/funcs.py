@@ -84,8 +84,8 @@ def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
     ]
 
 
-def get_file_names_set(path):
-    return set(map(str.lower, os.listdir(path)))
+def get_file_names_set(path: Path) -> set[str]:
+    return {f.name.lower() for f in Path(path).iterdir() if f.is_file()}
 
 
 def get_names_walk(path):
@@ -114,10 +114,10 @@ def move_files(file_names: tuple[str], path_src: str, path_dst: str) -> None:
 
 def rename_files(mapping: dict[str, str], path: str) -> None:
 
-    for fn_in, fn_ut in mapping.items():
+    for f_name_src, f_name_dst in mapping.items():
         os.rename(
-            path.joinpath(fn_in),
-            path.joinpath(fn_ut)
+            path.joinpath(f_name_src),
+            path.joinpath(f_name_dst)
         )
 
     print(f'{path}: Done')
