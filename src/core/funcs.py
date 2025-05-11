@@ -6,7 +6,6 @@ Created on Sun Jun 18 22:51:34 2023
 @author: green-machine
 """
 
-import io
 import json
 import os
 import re
@@ -14,23 +13,18 @@ import shutil
 from pathlib import Path
 
 from core.config import PATH_LOG
-from core.constants import FILE_NAME_LOG, MAP_CYRILLIC_TO_LATIN
-
-# def get_set_from_text_file(file_name: str) -> set[str]:
-#     with open(file_name) as f:
-#         return {
-#             _.rstrip().split('\\')[1] for _ in f.readlines()
-#             if not _.startswith(PREFIXES)
-#         }
+from core.constants import FILE_NAME_LOG, MAP_CYRILLIC_TO_LATIN, PREFIXES
 
 
-# def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
-#     return [
-#         file_name for file_name in tuple(os.listdir(path)) if any(match in file_name for match in matchers)
-#     ]
+def get_set_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
+    return {
+        line.split('\\')[1]
+        for line in file_path.read_text().splitlines()
+        if line and not any(line.startswith(prefix) for prefix in prefixes)
+    }
 
 
-def copy2_files(file_names: tuple[str], path_src: str, path_dst: str) -> None:
+def copy2_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
 
     for file_name in file_names:
         shutil.copy2(
@@ -40,8 +34,13 @@ def copy2_files(file_names: tuple[str], path_src: str, path_dst: str) -> None:
         print(f'Copied <{file_name}> from {path_src} to {path_dst}')
 
 
-def get_all_files_except(string: str) -> tuple[str]:
-    return tuple(filter(lambda _: _ != string, os.listdir()))
+def get_all_files_except(name_excluded: str, folder_str=None) -> tuple[str, ...]:
+    path = Path(folder_str or '.')
+    return tuple(
+        file.name
+        for file in path.iterdir()
+        if file.is_file() and file.name != name_excluded
+    )
 
 
 def get_camel_to_snake_map(strings: tuple[str]) -> dict[str, str]:
@@ -62,11 +61,18 @@ def get_camel_to_snake_map(strings: tuple[str]) -> dict[str, str]:
     )
 
 
-def get_file_names_filter(prefixes: tuple[str], path: str = None) -> set[str]:
-    return set(filter(lambda _: not _.startswith(prefixes), map(str.lower, os.listdir(path))))
+def get_file_names_filter(prefixes: set[str] = PREFIXES, folder_str=None) -> set[str]:
+    path = Path(folder_str or '.')
+    return {
+        file.name.lower()
+        for file in path.iterdir()
+        if file.is_file() and not any(
+            file.name.lower().startswith(prefix) for prefix in prefixes
+        )
+    }
 
 
-def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
+def get_file_names_match(matchers: tuple[str], folder_str=None) -> list[str]:
     """
     Comprehension Filter for Files in Folder
     Parameters
@@ -79,9 +85,21 @@ def get_file_names_match(matchers: tuple[str], path: str = None) -> list[str]:
     # =========================================================================
     # TODO: any OR all
     # =========================================================================
+    path = Path(folder_str or '.')
     return [
-        file_name for file_name in os.listdir(path) if all(match in file_name for match in matchers)
+        file.name
+        for file in path.iterdir()
+        if file.is_file() and all(matcher in file.name for matcher in matchers)
     ]
+
+
+# def get_file_names_match(matchers: tuple[str], folder_str=None) -> list[str]:
+#     path = Path(folder_str or '.')
+#     return [
+#         file.name
+#         for file in path.iterdir()
+#         if file.is_file() and any(matcher in file.name for matcher in matchers)
+#     ]
 
 
 def get_file_names_set(path: Path) -> set[str]:
@@ -97,12 +115,14 @@ def get_string_from_file(file_name: str) -> list[str]:
         return list(map(str.rstrip, f))
 
 
-def get_set_from_text_file(file_name: str) -> set:
-    with io.open(file_name, encoding='utf-8') as f:
-        return set(map(str.lower, map(str.rstrip, f.readlines())))
+def get_set_from_text_file(file_path: Path) -> set[str]:
+    return {
+        line.rstrip().lower()
+        for line in file_path.read_text(encoding='utf-8').splitlines()
+    }
 
 
-def move_files(file_names: tuple[str], path_src: str, path_dst: str) -> None:
+def move_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
 
     for file_name in file_names:
         shutil.move(
@@ -112,12 +132,12 @@ def move_files(file_names: tuple[str], path_src: str, path_dst: str) -> None:
         print(f'Moved <{file_name}> from {path_src} to {path_dst}')
 
 
-def rename_files(mapping: dict[str, str], path: str) -> None:
+def rename_files(mapping: dict[str, str], path: Path) -> None:
 
-    for f_name_src, f_name_dst in mapping.items():
+    for src, dst in mapping.items():
         os.rename(
-            path.joinpath(f_name_src),
-            path.joinpath(f_name_dst)
+            path.joinpath(src),
+            path.joinpath(dst)
         )
 
     print(f'{path}: Done')

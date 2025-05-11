@@ -8,17 +8,18 @@ MAP_CYRILLIC_TO_LATIN = {
 }
 
 
-PREFIXES = ('.', '_', '~')
+PREFIXES = {'.', '_', '~'}
 
 
-FILE_NAMES = ['test.py']
 FILE_NAMES = [
     'incompleteDFT.py',
     'incompleteDataFusionUSACostIndex.py',
     'incompleteUSABLSV.py'
     'incompletedataFetchCAN.py',
 ]
+
 FILE_NAMES = ['datafetch.py', 'project.py', 'test.py', 'tools.py']
+
 FILE_NAMES = [
     'Reference EN Cobb C.W., Douglas P.H. A Theory of Production.pdf',
     'Reference EN Douglas P.H. The Theory of Wages.pdf',
@@ -28,6 +29,7 @@ FILE_NAMES = [
     'Reference RU Brown M. 0597_099.pdf',
     'Reference RU Kurenkov Yu.V. Proizvodstvennye moshchnost v promyshlennosti glavnykh kapitalisticheskikh stran.pdf'
 ]
+
 FILE_NAMES = [
     'reference_en_douglas_p_h_cobb_douglas_production_function_once_again_en.pdf',
     'reference_en_douglas_p_h_cobb_douglas_production_function_once_again_en.tex',
