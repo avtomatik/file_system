@@ -9,7 +9,6 @@ Created on Sun Jun 18 22:51:34 2023
 import json
 import os
 import re
-import shutil
 from pathlib import Path
 
 from core.config import PATH_LOG
@@ -99,13 +98,15 @@ def get_file_names_set(path: Path) -> set[str]:
     return {f.name.lower() for f in Path(path).iterdir() if f.is_file()}
 
 
-def get_names_walk(path):
-    return map(lambda _: _[1:], os.walk(path))
+def get_names_walk(folder_str: str):
+    result = []
+    for _, dirnames, filenames in os.walk(folder_str):
+        result.append((dirnames, filenames))
+    return result
 
 
-def get_string_from_file(file_name: str) -> list[str]:
-    with open(file_name) as f:
-        return list(map(str.rstrip, f))
+def get_string_from_file(file_path: Path) -> list[str]:
+    return [line.rstrip() for line in file_path.read_text().splitlines()]
 
 
 def get_set_from_text_file(file_path: Path) -> set[str]:
@@ -116,27 +117,26 @@ def get_set_from_text_file(file_path: Path) -> set[str]:
 
 
 def move_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
+    path_dst.mkdir(parents=True, exist_ok=True)
 
     for file_name in file_names:
-        shutil.move(
-            path_src.joinpath(file_name),
-            path_dst.joinpath(file_name)
-        )
+        src = path_src / file_name
+        dst = path_dst / file_name
+
+        src.rename(dst)
         print(f'Moved <{file_name}> from {path_src} to {path_dst}')
 
 
 def rename_files(mapping: dict[str, str], path: Path) -> None:
-
     for src, dst in mapping.items():
-        os.rename(
-            path.joinpath(src),
-            path.joinpath(dst)
-        )
+        src_path = path / src
+        dst_path = path / dst
+        src_path.rename(dst_path)
 
     print(f'{path}: Done')
 
 
-def unlink_files(file_names: tuple[str], path: str) -> None:
+def unlink_files(file_names: tuple[str], path: Path) -> None:
 
     for file_name in file_names:
         path.joinpath(file_name).unlink()
@@ -145,18 +145,42 @@ def unlink_files(file_names: tuple[str], path: str) -> None:
 
 
 def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
-    return ''.join(
-        mapping[_.lower()] if _.lower() in mapping.keys() else _ for _ in word
-    )
+    word_lower = word.lower()
+
+    result = []
+
+    for char in word_lower:
+        if char in mapping:
+            result.append(mapping[char])
+        else:
+            result.append(char)
+
+    return ''.join(result)
 
 
-def trim_file_name(file_name: str) -> str:
-    _file_name = f"{trim_string(Path(file_name).stem, '_')}{Path(file_name).suffix}"
-    return transliterate('_'.join(filter(bool, _file_name.lower().split('_'))))
+def trim_file_name(file_path: Path) -> str:
+    file_stem = file_path.stem
+
+    trimmed_name = trim_string(file_stem, '_')
+
+    file_suffix = file_path.suffix
+
+    transliterated_name = transliterate(trimmed_name)
+
+    return f'{transliterated_name}{file_suffix}'
 
 
 def trim_string(string: str, fill: str = ' ') -> str:
-    return fill.join(filter(bool, re.split(r'\W', string)))
+    split_string = re.split(r'\W', string)
+
+    cleaned_string = []
+
+    for part in split_string:
+        if not part:
+            continue
+        cleaned_string.append(part)
+
+    return fill.join(cleaned_string)
 
 
 def move_and_rename_files(
