@@ -11,8 +11,8 @@ MAP_CYRILLIC_TO_LATIN = {
 PREFIXES = {'.', '_', '~'}
 
 
-FILE_NAME_L = 'file_names_d.txt'
-FILE_NAME_R = 'file_names_e.txt'
+FILE_NAME_SRC = 'file_names_d.txt'
+FILE_NAME_DST = 'file_names_e.txt'
 
 
 today = datetime.datetime.today()
