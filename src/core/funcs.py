@@ -25,12 +25,14 @@ def get_set_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
 
 
 def copy2_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
-
     for file_name in file_names:
-        shutil.copy2(
-            path_src.joinpath(file_name),
-            path_dst.joinpath(file_name)
-        )
+        file_path_src = path_src / file_name
+        file_path_dst = path_dst / file_name
+
+        file_path_dst.parent.mkdir(parents=True, exist_ok=True)
+        with file_path_src.open('rb') as fsrc, file_path_dst.open('wb') as fdst:
+            fdst.write(fsrc.read())
+
         print(f'Copied <{file_name}> from {path_src} to {path_dst}')
 
 
