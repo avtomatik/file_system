@@ -17,8 +17,8 @@ from core.constants import FILE_NAME_LOG, MAP_CYRILLIC_TO_LATIN, PREFIXES
 
 def get_set_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
     return {
-        line.split('\\')[1]
-        for line in file_path.read_text().splitlines()
+        Path(line).name
+        for line in file_path.read_text(encoding='utf-8').splitlines()
         if line and not any(line.startswith(prefix) for prefix in prefixes)
     }
 
@@ -45,12 +45,10 @@ def get_all_files_except(name_excluded: str, folder_str=None) -> tuple[str, ...]
 
 
 def generate_snake_case_map(strings: tuple[str]) -> dict[str, str]:
-    result = {}
-    for string in strings:
-        # Convert CamelCase to snake_case
-        snake_case = re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
-        result[string] = snake_case
-    return result
+    return {
+        string: re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
+        for string in strings
+    }
 
 
 def get_file_names_filter(prefixes: set[str] = PREFIXES, folder_str=None) -> set[str]:
@@ -109,13 +107,6 @@ def get_string_from_file(file_path: Path) -> list[str]:
     return [line.rstrip() for line in file_path.read_text().splitlines()]
 
 
-def get_set_from_text_file(file_path: Path) -> set[str]:
-    return {
-        line.rstrip().lower()
-        for line in file_path.read_text(encoding='utf-8').splitlines()
-    }
-
-
 def move_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
     path_dst.mkdir(parents=True, exist_ok=True)
 
@@ -145,42 +136,19 @@ def unlink_files(file_names: tuple[str], path: Path) -> None:
 
 
 def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
-    word_lower = word.lower()
-
-    result = []
-
-    for char in word_lower:
-        if char in mapping:
-            result.append(mapping[char])
-        else:
-            result.append(char)
-
-    return ''.join(result)
+    return ''.join(mapping.get(char, char) for char in word.lower())
 
 
 def trim_file_name(file_path: Path) -> str:
     file_stem = file_path.stem
-
     trimmed_name = trim_string(file_stem, '_')
-
     file_suffix = file_path.suffix
-
-    transliterated_name = transliterate(trimmed_name)
-
-    return f'{transliterated_name}{file_suffix}'
+    return f'{transliterate(trimmed_name)}{file_suffix}'
 
 
 def trim_string(string: str, fill: str = ' ') -> str:
     split_string = re.split(r'\W', string)
-
-    cleaned_string = []
-
-    for part in split_string:
-        if not part:
-            continue
-        cleaned_string.append(part)
-
-    return fill.join(cleaned_string)
+    return fill.join(part for part in split_string if part)
 
 
 def move_and_rename_files(
