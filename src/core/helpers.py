@@ -7,13 +7,11 @@ Created on Sun Jun 18 22:51:34 2023
 """
 
 import json
-import os
 import re
 from pathlib import Path
 from typing import Iterable, Optional, Protocol
 
-from core.config import PATH_LOG
-from core.constants import FILE_NAME_LOG, MAP_CYRILLIC_TO_LATIN, PREFIXES
+from core.constants import MAP_CYRILLIC_TO_LATIN, PREFIXES
 
 
 def extract_file_names_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
@@ -73,9 +71,6 @@ def get_files_matching_all_patterns(matchers: tuple[str], folder_str=None) -> li
     -------
         list[str]
     """
-    # =========================================================================
-    # TODO: any OR all
-    # =========================================================================
     path = Path(folder_str or '.')
     return [
         file.name
@@ -97,10 +92,13 @@ def get_file_names_as_set(path: Path) -> set[str]:
     return {f.name.lower() for f in Path(path).iterdir() if f.is_file()}
 
 
-def walk_directory_and_get_names(folder_str: str):
+def walk_and_list_directory(path: Path):
     result = []
-    for _, dirnames, filenames in os.walk(folder_str):
-        result.append((dirnames, filenames))
+    for path in path.rglob('*'):
+        if path.is_dir():
+            dirnames = [p.name for p in path.iterdir() if p.is_dir()]
+            filenames = [p.name for p in path.iterdir() if p.is_file()]
+            result.append((dirnames, filenames))
     return result
 
 
