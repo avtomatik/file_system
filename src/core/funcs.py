@@ -45,22 +45,13 @@ def get_all_files_except(name_excluded: str, folder_str=None) -> tuple[str, ...]
     )
 
 
-def get_camel_to_snake_map(strings: tuple[str]) -> dict[str, str]:
-    return dict(
-        zip(
-            strings,
-            map(
-                str.lower,
-                map(
-                    # =========================================================
-                    # TODO: Figure Out How It Works
-                    # =========================================================
-                    lambda _: re.sub(r'(?<!^)(?=[A-Z])', '_', _),
-                    strings
-                )
-            )
-        )
-    )
+def generate_snake_case_map(strings: tuple[str]) -> dict[str, str]:
+    result = {}
+    for string in strings:
+        # Convert CamelCase to snake_case
+        snake_case = re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
+        result[string] = snake_case
+    return result
 
 
 def get_file_names_filter(prefixes: set[str] = PREFIXES, folder_str=None) -> set[str]:
