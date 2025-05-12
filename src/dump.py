@@ -9,10 +9,10 @@ from pathlib import Path
 
 from core.config import PATH_DST, PATH_SRC, PATH_TST
 from core.constants import FILE_NAME_DST, FILE_NAME_SRC
-from core.helpers import get_string_from_file, trim_file_name
+from core.helpers import generate_trimmed_file_name, read_lines_from_file
 
-file_names_src = get_string_from_file(FILE_NAME_SRC)
-file_names_dst = get_string_from_file(FILE_NAME_DST)
+file_names_src = read_lines_from_file(FILE_NAME_SRC)
+file_names_dst = read_lines_from_file(FILE_NAME_DST)
 
 max_len = max(len(file_names_src), len(file_names_dst))
 file_names_src += ['None'] * (max_len - len(file_names_src))
@@ -31,7 +31,7 @@ MAP_RENAMING = {
 # =============================================================================
 for file_name in MAP_RENAMING.keys():
     src = Path(file_name)
-    dst = Path(trim_file_name(file_name))
+    dst = Path(generate_trimmed_file_name(file_name))
     if src.exists() and not dst.exists():
         src.rename(dst)
 
@@ -41,7 +41,7 @@ for file_name in MAP_RENAMING.keys():
 for file_name_src, file_name_dst in MAP_RENAMING.items():
     action = file_name_src
     src = file_name_dst
-    dst = trim_file_name(src)
+    dst = generate_trimmed_file_name(src)
 
     if action == f'{PATH_TST} TO {PATH_SRC}':
         src_path = Path(src)

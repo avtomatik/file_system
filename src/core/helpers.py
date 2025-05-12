@@ -16,7 +16,7 @@ from core.config import PATH_LOG
 from core.constants import FILE_NAME_LOG, MAP_CYRILLIC_TO_LATIN, PREFIXES
 
 
-def get_set_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
+def extract_file_names_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
     return {
         Path(line).name
         for line in file_path.read_text(encoding='utf-8').splitlines()
@@ -24,7 +24,7 @@ def get_set_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
     }
 
 
-def copy2_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
+def copy_files_to_destination(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
     for file_name in file_names:
         file_path_src = path_src / file_name
         file_path_dst = path_dst / file_name
@@ -36,7 +36,7 @@ def copy2_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
         print(f'Copied <{file_name}> from {path_src} to {path_dst}')
 
 
-def get_all_files_except(name_excluded: str, folder_str=None) -> tuple[str, ...]:
+def get_files_excluding(name_excluded: str, folder_str=None) -> tuple[str, ...]:
     path = Path(folder_str or '.')
     return tuple(
         file.name
@@ -45,14 +45,14 @@ def get_all_files_except(name_excluded: str, folder_str=None) -> tuple[str, ...]
     )
 
 
-def generate_snake_case_map(strings: tuple[str]) -> dict[str, str]:
+def convert_strings_to_snake_case(strings: tuple[str]) -> dict[str, str]:
     return {
         string: re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
         for string in strings
     }
 
 
-def get_file_names_filter(prefixes: set[str] = PREFIXES, folder_str=None) -> set[str]:
+def get_filtered_file_names(prefixes: set[str] = PREFIXES, folder_str=None) -> set[str]:
     path = Path(folder_str or '.')
     return {
         file.name.lower()
@@ -63,7 +63,7 @@ def get_file_names_filter(prefixes: set[str] = PREFIXES, folder_str=None) -> set
     }
 
 
-def get_file_names_match(matchers: tuple[str], folder_str=None) -> list[str]:
+def get_files_matching_all_patterns(matchers: tuple[str], folder_str=None) -> list[str]:
     """
     Comprehension Filter for Files in Folder
     Parameters
@@ -84,31 +84,31 @@ def get_file_names_match(matchers: tuple[str], folder_str=None) -> list[str]:
     ]
 
 
-# def get_file_names_match(matchers: tuple[str], folder_str=None) -> list[str]:
-#     path = Path(folder_str or '.')
-#     return [
-#         file.name
-#         for file in path.iterdir()
-#         if file.is_file() and any(matcher in file.name for matcher in matchers)
-#     ]
+def get_files_matching_any_pattern(matchers: tuple[str], folder_str=None) -> list[str]:
+    path = Path(folder_str or '.')
+    return [
+        file.name
+        for file in path.iterdir()
+        if file.is_file() and any(matcher in file.name for matcher in matchers)
+    ]
 
 
-def get_file_names_set(path: Path) -> set[str]:
+def get_file_names_as_set(path: Path) -> set[str]:
     return {f.name.lower() for f in Path(path).iterdir() if f.is_file()}
 
 
-def get_names_walk(folder_str: str):
+def walk_directory_and_get_names(folder_str: str):
     result = []
     for _, dirnames, filenames in os.walk(folder_str):
         result.append((dirnames, filenames))
     return result
 
 
-def get_string_from_file(file_path: Path) -> list[str]:
+def read_lines_from_file(file_path: Path) -> list[str]:
     return [line.rstrip() for line in file_path.read_text().splitlines()]
 
 
-def move_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
+def move_files_to_destination(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
     path_dst.mkdir(parents=True, exist_ok=True)
 
     for file_name in file_names:
@@ -119,7 +119,7 @@ def move_files(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
         print(f'Moved <{file_name}> from {path_src} to {path_dst}')
 
 
-def rename_files(mapping: dict[str, str], path: Path) -> None:
+def rename_files_based_on_mapping(mapping: dict[str, str], path: Path) -> None:
     for src, dst in mapping.items():
         src_path = path / src
         dst_path = path / dst
@@ -128,7 +128,7 @@ def rename_files(mapping: dict[str, str], path: Path) -> None:
     print(f'{path}: Done')
 
 
-def unlink_files(file_names: tuple[str], path: Path) -> None:
+def delete_files(file_names: tuple[str], path: Path) -> None:
 
     for file_name in file_names:
         path.joinpath(file_name).unlink()
@@ -136,18 +136,18 @@ def unlink_files(file_names: tuple[str], path: Path) -> None:
     print(f'{path}: Done')
 
 
-def transliterate(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
+def transliterate_to_latin(word: str, mapping: dict[str] = MAP_CYRILLIC_TO_LATIN) -> str:
     return ''.join(mapping.get(char, char) for char in word.lower())
 
 
-def trim_file_name(file_path: Path) -> str:
+def generate_trimmed_file_name(file_path: Path) -> str:
     file_stem = file_path.stem
-    trimmed_name = trim_string(file_stem, '_')
+    trimmed_name = clean_string(file_stem, '_')
     file_suffix = file_path.suffix
-    return f'{transliterate(trimmed_name)}{file_suffix}'
+    return f'{transliterate_to_latin(trimmed_name)}{file_suffix}'
 
 
-def trim_string(string: str, fill: str = ' ') -> str:
+def clean_string(string: str, fill: str = ' ') -> str:
     split_string = re.split(r'\W', string)
     return fill.join(part for part in split_string if part)
 
@@ -169,7 +169,7 @@ class NullLogger:
 
 class TrimFileNameTransformer:
     def transform(self, file_name: str) -> str:
-        return trim_file_name(file_name)
+        return generate_trimmed_file_name(file_name)
 
 
 class JsonFileLogger:
