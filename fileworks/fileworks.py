@@ -1,15 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Jun 19 17:06:20 2022
-
-@author: Alexander Mikhailov
-"""
-
 from pathlib import Path
 
 from core.config import PATH
-from core.helpers import FileMoverRenamer, TrimFileNameTransformer
+from fileworks.mover.mover import FileMoverRenamer
+from fileworks.tools.transformers import TrimFileNameTransformer
 
 MATCHERS = ('.csv',)
 MATCHERS = ('',)

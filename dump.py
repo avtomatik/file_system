@@ -9,7 +9,8 @@ from pathlib import Path
 
 from core.config import PATH_DST, PATH_SRC, PATH_TST
 from core.constants import FILE_NAME_DST, FILE_NAME_SRC
-from core.helpers import generate_trimmed_file_name, read_lines_from_file
+from fileworks.tools.io_utils import read_lines_from_file
+from fileworks.tools.transformers import generate_trimmed_file_name
 
 file_names_src = read_lines_from_file(FILE_NAME_SRC)
 file_names_dst = read_lines_from_file(FILE_NAME_DST)
