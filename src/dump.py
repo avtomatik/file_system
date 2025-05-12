@@ -9,7 +9,7 @@ from pathlib import Path
 
 from core.config import PATH_DST, PATH_SRC, PATH_TST
 from core.constants import FILE_NAME_DST, FILE_NAME_SRC
-from core.funcs import get_string_from_file, trim_file_name
+from core.helpers import get_string_from_file, trim_file_name
 
 file_names_src = get_string_from_file(FILE_NAME_SRC)
 file_names_dst = get_string_from_file(FILE_NAME_DST)

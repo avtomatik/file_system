@@ -10,6 +10,7 @@ import json
 import os
 import re
 from pathlib import Path
+from typing import Iterable, Optional, Protocol
 
 from core.config import PATH_LOG
 from core.constants import FILE_NAME_LOG, MAP_CYRILLIC_TO_LATIN, PREFIXES
@@ -151,55 +152,69 @@ def trim_string(string: str, fill: str = ' ') -> str:
     return fill.join(part for part in split_string if part)
 
 
-def move_and_rename_files(
-    path_src: Path,
-    path_dst: Path,
-    file_names: tuple[str]
-) -> None:
-    """
-    Moves files from one to another folder with renamed filenames.
+class FileNameTransformer(Protocol):
+    def transform(self, file_name: str) -> str:
+        ...
 
-    Parameters
-    ----------
-    path_src : Path
-        Source Directory Path.
-    path_dst : Path
-        Destination Directory Path.
-    file_names : tuple[str]
-        File Names to Move and Rename.
 
-    Returns
-    -------
-    None
-        Nothing.
+class Logger(Protocol):
+    def log(self, entries: list[dict]) -> None:
+        ...
 
-    """
 
-    logs = []
+class NullLogger:
+    def log(self, entries: list[dict]) -> None:
+        ...
 
-    for file_name in file_names:
-        name_src = path_src.joinpath(file_name)
 
-        if not name_src.exists():
-            continue
+class TrimFileNameTransformer:
+    def transform(self, file_name: str) -> str:
+        return trim_file_name(file_name)
 
-        name_new = trim_file_name(file_name)
-        name_dst = path_dst.joinpath(name_new)
 
-        name_dst.parent.mkdir(parents=True, exist_ok=True)
-        name_src.rename(name_dst)
+class JsonFileLogger:
+    def __init__(self, log_path: Path):
+        self.log_path = log_path
 
-        # =====================================================================
-        # Logging
-        # =====================================================================
-        if file_name != name_new:
-            logs.append({'src': file_name, 'dst': name_new})
+    def log(self, entries: list[dict]) -> None:
+        self.log_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.log_path.open('w', encoding='utf-8') as f:
+            json.dump(entries, f, ensure_ascii=False, indent=4)
+        print(f'Renamed and Moved {len(entries)} Files')
 
-    if logs:
-        logs_path = PATH_LOG.joinpath(FILE_NAME_LOG)
-        with logs_path.open('w', encoding='utf-8') as f:
-            json.dump(logs, f, ensure_ascii=False, indent=4)
 
-        print(f'Renamed and Moved {len(logs)} Files')
-    else:
-        print('No Files Were Renamed')
+class FileMoverRenamer:
+    def __init__(
+        self,
+        transformer: FileNameTransformer,
+        logger: Optional[Logger] = None
+    ):
+        self.transformer = transformer
+        self.logger = logger or NullLogger()  # Fallback to NullLogger
+
+    def move_and_rename(
+        self,
+        src_dir: Path,
+        dst_dir: Path,
+        file_names: Iterable[str]
+    ) -> None:
+        logs = []
+
+        for file_name in file_names:
+            src_path = src_dir / file_name
+            if not src_path.exists():
+                continue
+
+            new_name = self.transformer.transform(file_name)
+            dst_path = dst_dir / new_name
+            dst_path.parent.mkdir(parents=True, exist_ok=True)
+
+            src_path.rename(dst_path)
+
+            if file_name != new_name:
+                logs.append({'src': file_name, 'dst': new_name})
+
+        if logs:
+            self.logger.log(logs)
+        else:
+            print('No Files Were Renamed')

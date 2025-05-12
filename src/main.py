@@ -9,7 +9,7 @@ Created on Sun Jun 19 17:06:20 2022
 from pathlib import Path
 
 from core.config import PATH
-from core.funcs import move_and_rename_files
+from core.helpers import FileMoverRenamer, TrimFileNameTransformer
 
 MATCHERS = ('.csv',)
 MATCHERS = ('',)
@@ -26,10 +26,6 @@ if __name__ == '__main__':
 
     file_names = tuple(f.name for f in PATH.iterdir())
 
-    kwargs = {
-        'path_src': PATH,
-        'path_dst': PATH,
-        'file_names': file_names,
-    }
-
-    move_and_rename_files(**kwargs)
+    file_transformer = TrimFileNameTransformer()
+    mover = FileMoverRenamer(file_transformer)  # No logger passed
+    mover.move_and_rename(PATH, PATH, file_names)

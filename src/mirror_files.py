@@ -1,7 +1,7 @@
 
 from core.constants import PREFIXES
-from core.funcs import (copy2_files, get_file_names_filter, get_file_names_set,
-                        get_set_from_text_file)
+from core.helpers import (copy2_files, get_file_names_filter,
+                          get_file_names_set, get_set_from_text_file)
 
 
 def mirror_files(path_from, path_to, FILE_NAME_L, FILE_NAME_R):
