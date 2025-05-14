@@ -1,19 +1,5 @@
 from pathlib import Path
 
-from core.constants import PREFIXES
-
-
-def read_lines_from_file(file_path: Path) -> list[str]:
-    return [line.rstrip() for line in file_path.read_text().splitlines()]
-
-
-def extract_file_names_from_text_file(file_path: Path, prefixes=PREFIXES) -> set[str]:
-    return {
-        Path(line).name
-        for line in file_path.read_text(encoding='utf-8').splitlines()
-        if line and not any(line.startswith(prefix) for prefix in prefixes)
-    }
-
 
 def copy_files_to_destination(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
     for file_name in file_names:

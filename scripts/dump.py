@@ -9,11 +9,10 @@ from pathlib import Path
 
 from core.config import PATH_DST, PATH_SRC, PATH_TST
 from core.constants import FILE_NAME_DST, FILE_NAME_SRC
-from fileworks.tools.io_utils import read_lines_from_file
 from fileworks.tools.transformers import generate_trimmed_file_name
 
-file_names_src = read_lines_from_file(FILE_NAME_SRC)
-file_names_dst = read_lines_from_file(FILE_NAME_DST)
+file_names_src = Path(FILE_NAME_SRC).read_text().splitlines()
+file_names_dst = Path(FILE_NAME_DST).read_text().splitlines()
 
 max_len = max(len(file_names_src), len(file_names_dst))
 file_names_src += ['None'] * (max_len - len(file_names_src))
