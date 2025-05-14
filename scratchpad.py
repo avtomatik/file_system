@@ -46,9 +46,7 @@ def compare_directories_and_report():
 
 def count_files_in_directory(directory_path: Path):
     # Function to count the number of files in a specific directory
-    total_files = sum(1 for file in directory_path.rglob('*')
-                      if file.is_file())
-    return total_files
+    return sum(file.is_file() for file in directory_path.rglob('*'))
 
 
 def remove_matching_files_between_directories():
