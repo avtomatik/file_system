@@ -9,6 +9,7 @@ from pathlib import Path
 
 from core.config import PATH_DST, PATH_SRC, PATH_TST
 from core.constants import FILE_NAME_DST, FILE_NAME_SRC
+
 from fileworks.tools.transformers import generate_trimmed_file_name
 
 file_names_src = Path(FILE_NAME_SRC).read_text().splitlines()

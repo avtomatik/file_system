@@ -1,12 +1,6 @@
-import re
 from pathlib import Path
 
-from fileworks.tools.name_utils import transliterate_to_latin
-
-
-def clean_string(string: str, fill: str = ' ') -> str:
-    split_string = re.split(r'\W', string)
-    return fill.join(part for part in split_string if part)
+from fileworks.utils.string import clean_string, transliterate_to_latin
 
 
 def generate_trimmed_file_name(file_path: Path) -> str:

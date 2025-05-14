@@ -1,11 +1,10 @@
 from pathlib import Path
 
-from core.config import PATH
+from fileworks.core.config import PATH
 from fileworks.mover.mover import FileMoverRenamer
 from fileworks.tools.transformers import TrimFileNameTransformer
 
 MATCHERS = ('.csv',)
-MATCHERS = ('',)
 
 
 def is_target(f: Path, matchers: tuple[str], flag: str = '') -> bool:

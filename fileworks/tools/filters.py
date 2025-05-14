@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from core.constants import PREFIXES
+from fileworks.core.constants import PREFIXES
 
 
 def get_files_excluding(name_excluded: str, folder_str=None) -> list[str]:
@@ -54,3 +54,28 @@ def walk_and_list_directory(path: Path):
             filenames = [p.name for p in path.iterdir() if p.is_file()]
             result.append((dirnames, filenames))
     return result
+
+
+def get_empty_files(path: Path, reserved: set) -> list:
+    """
+    Retrieve a list of file names that are empty and not in the reserved set.
+
+    :param path: Path to the directory where the files are located.
+    :param reserved: Set of reserved file names that should be excluded.
+    :return: List of empty file names.
+    """
+    empty_file_names = []
+    for file in path.iterdir():
+        if file.is_file() and file.stat().st_size == 0 and file.name not in reserved:
+            empty_file_names.append(file.name)
+    return empty_file_names
+
+
+def get_file_names_in_directory(directory: Path) -> list:
+    """
+    Returns a list of filenames in the specified directory that are files (not directories).
+
+    :param directory: Path to the directory to scan
+    :return: List of filenames in the directory
+    """
+    return [file.name for file in directory.iterdir() if file.is_file()]
