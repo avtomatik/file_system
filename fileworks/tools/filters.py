@@ -3,25 +3,25 @@ from pathlib import Path
 from core.constants import PREFIXES
 
 
-def get_files_excluding(name_excluded: str, folder_str=None) -> tuple[str, ...]:
+def get_files_excluding(name_excluded: str, folder_str=None) -> list[str]:
     path = Path(folder_str or '.')
-    return tuple(
+    return [
         file.name
         for file in path.iterdir()
         if file.is_file() and file.name != name_excluded
-    )
+    ]
 
 
-def get_filtered_file_names(prefixes: set[str] = PREFIXES, folder_str=None) -> set[str]:
+def get_filtered_file_names(prefixes: set[str] = PREFIXES, folder_str=None) -> list[str]:
     # W0102
     path = Path(folder_str or '.')
-    return {
+    return [
         file.name.lower()
         for file in path.iterdir()
         if file.is_file() and not any(
             file.name.lower().startswith(prefix) for prefix in prefixes
         )
-    }
+    ]
 
 
 def get_files_matching_all_patterns(matchers: tuple[str], folder_str=None) -> list[str]:
@@ -42,7 +42,7 @@ def get_files_matching_any_pattern(matchers: tuple[str], folder_str=None) -> lis
     ]
 
 
-def get_file_names(path: Path) -> set[str]:
+def get_file_names(path: Path) -> list[str]:
     return [f.name.lower() for f in path.iterdir() if f.is_file()]
 
 
