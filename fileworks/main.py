@@ -1,23 +1,56 @@
 from pathlib import Path
 
-from fileworks.core.config import PATH
-from fileworks.mover.mover import FileMoverRenamer
-from fileworks.tools.transformers import TrimFileNameTransformer
+from core.config import PATH
+from mover.mover import FileMoverRenamer
+from mover.protocols import FileTransformer
+from tools.transformers import TrimFileNameTransformer
+
+
+class CsvFileFilter:
+    def is_target(self, file: Path) -> bool:
+        return file.suffix == '.csv'
+
+
+class TrimFileNameTransformerAdapter:
+    def __init__(self, transformer: TrimFileNameTransformer):
+        self.transformer = transformer
+
+    def transform(self, file_name: str) -> str:
+        return self.transformer.transform(file_name)
+
+
+class FileMoverAdapter:
+    def __init__(self, transformer: FileTransformer):
+        self.transformer = transformer
+
+    def move_and_rename(
+        self,
+        src_dir: Path,
+        dst_dir: Path,
+        file_names: list[str]
+    ) -> None:
+        mover = FileMoverRenamer(self.transformer)
+        mover.move_and_rename(src_dir, dst_dir, file_names)
+
 
 MATCHERS = ('.csv',)
 
 
-def is_target(f: Path, matchers: tuple[str], flag: str = '') -> bool:
-    return flag in f.name and f.suffix in matchers
+def main():
+# =============================================================================
+# TODO: Take Extension as Argument
+# =============================================================================
+    file_filter = CsvFileFilter()
+    transformer = TrimFileNameTransformerAdapter(TrimFileNameTransformer())
+    mover = FileMoverAdapter(transformer)
+
+    file_names = [
+        f.name for f in PATH.iterdir()
+        if file_filter.is_target(f)
+    ]
+
+    mover.move_and_rename(PATH, PATH, file_names)
 
 
 if __name__ == '__main__':
-    file_names = tuple(
-        f.name for f in PATH.iterdir() if is_target(f, MATCHERS)
-    )
-
-    file_names = tuple(f.name for f in PATH.iterdir())
-
-    file_transformer = TrimFileNameTransformer()
-    mover = FileMoverRenamer(file_transformer)  # No logger passed
-    mover.move_and_rename(PATH, PATH, file_names)
+    main()

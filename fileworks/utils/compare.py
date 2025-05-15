@@ -1,7 +1,7 @@
 import filecmp
 from hashlib import md5
 
-from fileworks.core.config import PATH, PATH_CTR, PATH_TST
+from core.config import PATH, PATH_CTR, PATH_TST
 
 
 def compare_file_digests_in_directory():

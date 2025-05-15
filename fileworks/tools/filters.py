@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fileworks.core.constants import PREFIXES
+from core.constants import PREFIXES
 
 
 def get_files_excluding(name_excluded: str, folder_str=None) -> list[str]:

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fileworks.utils.string import clean_string, transliterate_to_latin
+from utils.string import clean_string, transliterate_to_latin
 
 
 def generate_trimmed_file_name(file_path: Path) -> str:

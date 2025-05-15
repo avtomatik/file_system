@@ -2,9 +2,9 @@ import filecmp
 from itertools import product
 from pathlib import Path
 
-from fileworks.core.config import PATH, PATH_CTR, PATH_DST, PATH_SRC, PATH_TST
-from fileworks.tools.filters import get_file_names_in_directory
-from fileworks.utils.date import get_creation_time
+from core.config import PATH, PATH_CTR, PATH_DST, PATH_SRC, PATH_TST
+from tools.filters import get_file_names_in_directory
+from utils.date import get_creation_time
 
 
 def copy_files_to_destination(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:

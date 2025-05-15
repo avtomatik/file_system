@@ -1,6 +1,6 @@
 import re
 
-from fileworks.core.constants import MAP_CYRILLIC_TO_LATIN
+from core.constants import MAP_CYRILLIC_TO_LATIN
 
 
 def clean_string(string: str, fill: str = ' ') -> str:
