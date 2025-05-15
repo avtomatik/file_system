@@ -6,12 +6,24 @@ from mover.protocols import FileTransformer
 from tools.transformers import TrimFileNameTransformer
 
 
-class CsvFileFilter:
+class NullFileFilter:
+    """A filter that accepts all regular files (ignores directories)."""
+
     def is_target(self, file: Path) -> bool:
-        return file.suffix == '.csv'
+        return file.is_file()
+
+
+class FileExtensionFilter:
+    def __init__(self, extensions: tuple[str, ...]):
+        self.extensions = extensions
+
+    def is_target(self, file: Path) -> bool:
+        return file.is_file() and file.suffix in self.extensions
 
 
 class TrimFileNameTransformerAdapter:
+    """Adapter to make TrimFileNameTransformer compatible with FileTransformer protocol."""
+
     def __init__(self, transformer: TrimFileNameTransformer):
         self.transformer = transformer
 
@@ -20,6 +32,8 @@ class TrimFileNameTransformerAdapter:
 
 
 class FileMoverAdapter:
+    """Adapter to wrap FileMoverRenamer with the required transformer."""
+
     def __init__(self, transformer: FileTransformer):
         self.transformer = transformer
 
@@ -33,14 +47,10 @@ class FileMoverAdapter:
         mover.move_and_rename(src_dir, dst_dir, file_names)
 
 
-MATCHERS = ('.csv',)
-
-
 def main():
-# =============================================================================
-# TODO: Take Extension as Argument
-# =============================================================================
-    file_filter = CsvFileFilter()
+    file_filter = NullFileFilter()  # Accept all files
+    # Example usage:
+    # file_filter = FileExtensionFilter(('.csv', '.txt'))
     transformer = TrimFileNameTransformerAdapter(TrimFileNameTransformer())
     mover = FileMoverAdapter(transformer)
 
