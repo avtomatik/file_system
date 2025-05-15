@@ -1,7 +1,7 @@
 import re
 from typing import Protocol
 
-from core.constants import MAP_CYRILLIC_TO_LATIN
+from core.constants import CYRILLIC_TO_LATIN
 
 # ==========================
 # Protocols (Interfaces)
@@ -32,7 +32,7 @@ class RegexStringCleaner:
 
 
 class CyrillicToLatinTransliterator:
-    def __init__(self, mapping: dict[str, str] = MAP_CYRILLIC_TO_LATIN):
+    def __init__(self, mapping: dict[str, str] = CYRILLIC_TO_LATIN):
         self.mapping = mapping
 
     def transliterate(self, text: str) -> str:
