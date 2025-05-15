@@ -1,15 +1,39 @@
 import re
+from typing import Protocol
 
 from core.constants import MAP_CYRILLIC_TO_LATIN
 
+# ==========================
+# Protocols (Interfaces)
+# ==========================
 
-def clean_string(string: str, fill: str = ' ') -> str:
-    split_string = re.split(r'\W', string)
-    return fill.join(part for part in split_string if part)
+
+class StringCleaner(Protocol):
+    def clean(self, string: str) -> str:
+        ...
 
 
-def transliterate_to_latin(
-    word: str,
-    mapping: dict[str, str] = MAP_CYRILLIC_TO_LATIN
-) -> str:
-    return ''.join(mapping.get(char, char) for char in word.lower())
+class Transliterator(Protocol):
+    def transliterate(self, text: str) -> str:
+        ...
+
+
+# ==========================
+# Concrete Implementations
+# ==========================
+
+class RegexStringCleaner:
+    def __init__(self, fill: str = ' '):
+        self.fill = fill
+
+    def clean(self, string: str) -> str:
+        split_string = re.split(r'\W', string)
+        return self.fill.join(part for part in split_string if part)
+
+
+class CyrillicToLatinTransliterator:
+    def __init__(self, mapping: dict[str, str] = MAP_CYRILLIC_TO_LATIN):
+        self.mapping = mapping
+
+    def transliterate(self, text: str) -> str:
+        return ''.join(self.mapping.get(char, char) for char in text.lower())

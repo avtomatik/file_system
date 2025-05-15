@@ -136,7 +136,7 @@ def copy_file(src: Path, dst: Path):
 
 def sync_files_from_control_to_destination():
     """
-    Synchronize files between the control path and the test path by copying the latest file 
+    Synchronize files between the control path and the test path by copying the latest file
     (based on creation time) to the destination and removing files from the source and test path.
     """
     for file_name in sorted(set(PATH_CTR.glob('*')) ^ set(PATH_TST.glob('*'))):

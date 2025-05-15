@@ -4,6 +4,7 @@ from core.config import PATH
 from mover.mover import FileMoverRenamer
 from mover.protocols import FileTransformer
 from tools.transformers import TrimFileNameTransformer
+from utils.string import CyrillicToLatinTransliterator, RegexStringCleaner
 
 
 class NullFileFilter:
@@ -51,7 +52,9 @@ def main():
     file_filter = NullFileFilter()  # Accept all files
     # Example usage:
     # file_filter = FileExtensionFilter(('.csv', '.txt'))
-    transformer = TrimFileNameTransformerAdapter(TrimFileNameTransformer())
+    cleaner = RegexStringCleaner(fill='_')
+    transliterator = CyrillicToLatinTransliterator()
+    transformer = TrimFileNameTransformer(cleaner, transliterator)
     mover = FileMoverAdapter(transformer)
 
     file_names = [

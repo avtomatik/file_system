@@ -1,15 +1,15 @@
 from pathlib import Path
 
-from utils.string import clean_string, transliterate_to_latin
-
-
-def generate_trimmed_file_name(file_path: Path) -> str:
-    file_stem = file_path.stem
-    trimmed_name = clean_string(file_stem, '_')
-    file_suffix = file_path.suffix
-    return f'{transliterate_to_latin(trimmed_name)}{file_suffix}'
+from utils.string import StringCleaner, Transliterator
 
 
 class TrimFileNameTransformer:
+    def __init__(self, cleaner: StringCleaner, transliterator: Transliterator):
+        self.cleaner = cleaner
+        self.transliterator = transliterator
+
     def transform(self, file_name: str) -> str:
-        return generate_trimmed_file_name(Path(file_name))
+        path = Path(file_name)
+        cleaned_name = self.cleaner.clean(path.stem)
+        transliterated = self.transliterator.transliterate(cleaned_name)
+        return f'{transliterated}{path.suffix}'
