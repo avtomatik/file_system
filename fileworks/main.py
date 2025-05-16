@@ -1,8 +1,8 @@
 from pathlib import Path
 
 from core.config import PATH
+from core.protocols import FileTransformer
 from mover.mover import FileMoverRenamer
-from mover.protocols import FileTransformer
 from tools.transformers import TrimFileNameTransformer
 from utils.string import CyrillicToLatinTransliterator, RegexStringCleaner
 

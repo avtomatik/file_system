@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Iterable, Optional
 
-from mover.protocols import FileNameTransformer, Logger
+from core.protocols import FileNameTransformer, Logger
 from tools.logger import NullLogger
 
 

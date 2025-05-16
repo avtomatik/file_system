@@ -163,12 +163,14 @@ def remove_empty_directories_in_directory():
             directory.rmdir()  # Remove the empty directory
 
 
-def remove_matching_files_between_directories():
-    # Function to compare files between two directories and remove matching ones
-    for source_root, _, source_files in zip(
-        (PATH / 'production' / 'egida_ptv' / 'lib').rglob('*'),
-        (PATH / 'web' / 'egida_ptv' / 'lib').rglob('*')
-    ):
-        for source_file, destination_file in zip(sorted(source_files), sorted(_fnames)):
-            if filecmp.cmp(source_root / source_file, _rt / destination_file):
-                (source_root / source_file).unlink()  # Remove matching file
+# =============================================================================
+# def remove_matching_files_between_directories():
+#     # Function to compare files between two directories and remove matching ones
+#     for source_root, _, source_files in zip(
+#         (PATH / 'production' / 'egida_ptv' / 'lib').rglob('*'),
+#         (PATH / 'web' / 'egida_ptv' / 'lib').rglob('*')
+#     ):
+#         for source_file, destination_file in zip(sorted(source_files), sorted(file_names)):
+#             if filecmp.cmp(source_root / source_file, root / destination_file):
+#                 (source_root / source_file).unlink()  # Remove matching file
+# =============================================================================

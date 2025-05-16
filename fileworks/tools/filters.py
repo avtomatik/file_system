@@ -1,10 +1,7 @@
 from pathlib import Path
-from typing import List, Protocol, Set, Tuple, Union
+from typing import List, Set, Tuple, Union
 
-
-class FileFilter(Protocol):
-    def matches(self, file: Path) -> bool:
-        ...
+from core.protocols import MatchFileFilter
 
 
 class NameExclusionFilter:
@@ -40,7 +37,9 @@ class PrefixExclusionFilter:
         self.prefixes = prefixes
 
     def matches(self, file: Path) -> bool:
-        return not any(file.name.lower().startswith(prefix) for prefix in self.prefixes)
+        return not any(
+            file.name.lower().startswith(prefix) for prefix in self.prefixes
+        )
 
 
 class PatternAllMatchFilter:
@@ -87,7 +86,11 @@ class FileService:
     def __init__(self, folder: Path = Path('.')):
         self.folder = folder
 
-    def list_files(self, filters: List[FileFilter] = None, lowercase: bool = False) -> List[str]:
+    def list_files(
+        self,
+        filters: List[MatchFileFilter] = None,
+        lowercase: bool = False
+    ) -> List[str]:
         """_summary_
 
         Args:
@@ -133,8 +136,11 @@ class FileService:
             >>> service = FileService(path)
             >>> empty_files = service.list_empty_files(reserved)
         """
-        return [file.name for file in self.folder.iterdir() if file.is_file() and
-                file.stat().st_size == 0 and file.name not in reserved]
+        return [
+            file.name
+            for file in self.folder.iterdir()
+            if file.is_file() and file.stat().st_size == 0 and file.name not in reserved
+        ]
 
     def walk_directory(self) -> List[Tuple[List[str], List[str]]]:
         """_summary_

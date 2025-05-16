@@ -12,7 +12,10 @@ def get_creation_time(file_path: Path) -> datetime:
     return datetime.fromtimestamp(file_path.stat().st_ctime)
 
 
-def generate_log_filename(prefix: str = 'log', timestamp: datetime = None) -> str:
+def generate_log_filename(
+    prefix: str = 'log',
+    timestamp: datetime = None
+) -> str:
     """
     Generates a timestamped log filename.
 
