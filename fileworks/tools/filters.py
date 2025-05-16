@@ -1,81 +1,155 @@
 from pathlib import Path
-
-from core.constants import PREFIXES
-
-
-def get_files_excluding(name_excluded: str, folder_str=None) -> list[str]:
-    path = Path(folder_str or '.')
-    return [
-        file.name
-        for file in path.iterdir()
-        if file.is_file() and file.name != name_excluded
-    ]
+from typing import List, Protocol, Set, Tuple, Union
 
 
-def get_filtered_file_names(prefixes: set[str] = PREFIXES, folder_str=None) -> list[str]:
-    # W0102
-    path = Path(folder_str or '.')
-    return [
-        file.name.lower()
-        for file in path.iterdir()
-        if file.is_file() and not any(
-            file.name.lower().startswith(prefix) for prefix in prefixes
-        )
-    ]
+class FileFilter(Protocol):
+    def matches(self, file: Path) -> bool:
+        ...
 
 
-def get_files_matching_all_patterns(matchers: tuple[str], folder_str=None) -> list[str]:
-    path = Path(folder_str or '.')
-    return [
-        file.name
-        for file in path.iterdir()
-        if file.is_file() and all(matcher in file.name for matcher in matchers)
-    ]
-
-
-def get_files_matching_any_pattern(matchers: tuple[str], folder_str=None) -> list[str]:
-    path = Path(folder_str or '.')
-    return [
-        file.name
-        for file in path.iterdir()
-        if file.is_file() and any(matcher in file.name for matcher in matchers)
-    ]
-
-
-def get_file_names(path: Path) -> list[str]:
-    return [f.name.lower() for f in path.iterdir() if f.is_file()]
-
-
-def walk_and_list_directory(path: Path):
-    result = []
-    for path in path.rglob('*'):
-        if path.is_dir():
-            dirnames = [p.name for p in path.iterdir() if p.is_dir()]
-            filenames = [p.name for p in path.iterdir() if p.is_file()]
-            result.append((dirnames, filenames))
-    return result
-
-
-def get_empty_files(path: Path, reserved: set) -> list:
+class NameExclusionFilter:
     """
-    Retrieve a list of file names that are empty and not in the reserved set.
-
-    :param path: Path to the directory where the files are located.
-    :param reserved: Set of reserved file names that should be excluded.
-    :return: List of empty file names.
+    Usage:
+        >>> service = FileService(Path(folder_str or '.'))
+        >>> files = service.list_files(
+                filters=[NameExclusionFilter(name_excluded)]
+            )
     """
-    empty_file_names = []
-    for file in path.iterdir():
-        if file.is_file() and file.stat().st_size == 0 and file.name not in reserved:
-            empty_file_names.append(file.name)
-    return empty_file_names
+
+    def __init__(self, names_to_exclude: Union[str, Tuple[str, ...]]):
+        if isinstance(names_to_exclude, str):
+            self.names_to_exclude = {names_to_exclude}
+        else:
+            self.names_to_exclude = set(names_to_exclude)
+
+    def matches(self, file: Path) -> bool:
+        return file.name not in self.names_to_exclude
 
 
-def get_file_names_in_directory(directory: Path) -> list:
+class PrefixExclusionFilter:
     """
-    Returns a list of filenames in the specified directory that are files (not directories).
-
-    :param directory: Path to the directory to scan
-    :return: List of filenames in the directory
+    Usage:
+        >>> service = FileService(Path(folder_str or '.'))
+        >>> files = service.list_files(
+                filters=[PrefixExclusionFilter(prefixes)],
+                lowercase=True
+            )
     """
-    return [file.name for file in directory.iterdir() if file.is_file()]
+
+    def __init__(self, prefixes: Set[str]):
+        self.prefixes = prefixes
+
+    def matches(self, file: Path) -> bool:
+        return not any(file.name.lower().startswith(prefix) for prefix in self.prefixes)
+
+
+class PatternAllMatchFilter:
+    """
+    Usage:
+        >>> service = FileService(Path(folder_str or '.'))
+        >>> files = service.list_files(
+                filters=[PatternAllMatchFilter(matchers)]
+            )
+    """
+
+    def __init__(self, patterns: Tuple[str]):
+        self.patterns = patterns
+
+    def matches(self, file: Path) -> bool:
+        return all(p in file.name for p in self.patterns)
+
+
+class PatternAnyMatchFilter:
+    """
+    Usage:
+        >>> service = FileService(Path(folder_str or '.'))
+        >>> files = service.list_files(
+                filters=[PatternAnyMatchFilter(matchers)]
+            )
+    """
+
+    def __init__(self, patterns: Tuple[str]):
+        self.patterns = patterns
+
+    def matches(self, file: Path) -> bool:
+        return any(p in file.name for p in self.patterns)
+
+
+class EmptyFileFilter:
+    def __init__(self, reserved: Set[str]):
+        self.reserved = reserved
+
+    def matches(self, file: Path) -> bool:
+        return file.stat().st_size == 0 and file.name not in self.reserved
+
+
+class FileService:
+    def __init__(self, folder: Path = Path('.')):
+        self.folder = folder
+
+    def list_files(self, filters: List[FileFilter] = None, lowercase: bool = False) -> List[str]:
+        """_summary_
+
+        Args:
+            filters (List[FileFilter], optional): _description_. Defaults to None.
+            lowercase (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            List[str]: _description_
+
+        Usage:
+            >>> service = FileService(path)
+            >>> files = service.list_files(lowercase=True)
+        """
+        filters = filters or []
+        result = []
+        for file in self.folder.iterdir():
+            if file.is_file() and all(f.matches(file) for f in filters):
+                result.append(file.name.lower() if lowercase else file.name)
+        return result
+
+    def list_all_file_names(self) -> List[str]:
+        """_summary_
+
+        Returns:
+            List[str]: _description_
+
+        Usage:
+            >>> service = FileService(path)
+            >>> source_file_names = service.list_all_file_names()
+        """
+        return [file.name for file in self.folder.iterdir() if file.is_file()]
+
+    def list_empty_files(self, reserved: Set[str]) -> List[str]:
+        """_summary_
+
+        Args:
+            reserved (Set[str]): _description_
+
+        Returns:
+            List[str]: _description_
+
+        Usage:
+            >>> service = FileService(path)
+            >>> empty_files = service.list_empty_files(reserved)
+        """
+        return [file.name for file in self.folder.iterdir() if file.is_file() and
+                file.stat().st_size == 0 and file.name not in reserved]
+
+    def walk_directory(self) -> List[Tuple[List[str], List[str]]]:
+        """_summary_
+
+        Returns:
+            List[Tuple[List[str], List[str]]]: _description_
+
+        Usage:
+            >>> service = FileService(path)
+            >>> structure = service.walk_directory()
+        """
+        result = []
+        for path in self.folder.rglob('*'):
+            if path.is_dir():
+                dirnames = [p.name for p in path.iterdir() if p.is_dir()]
+                filenames = [p.name for p in path.iterdir() if p.is_file()]
+                result.append((dirnames, filenames))
+        return result

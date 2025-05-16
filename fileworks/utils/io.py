@@ -3,8 +3,9 @@ from itertools import product
 from pathlib import Path
 
 from core.config import PATH, PATH_CTR, PATH_DST, PATH_SRC, PATH_TST
-from tools.filters import get_file_names_in_directory
 from utils.date import get_creation_time
+
+from fileworks.tools.filters import FileService
 
 
 def copy_files_to_destination(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:
@@ -105,8 +106,10 @@ def delete_matching_files():
     """
     Deletes files from the source path if they have a matching file in the destination path.
     """
-    source_file_names = get_file_names_in_directory(PATH_SRC)
-    destination_file_names = get_file_names_in_directory(PATH_DST)
+    service = FileService(PATH_SRC)
+    source_file_names = service.list_all_file_names()
+    service = FileService(PATH_DST)
+    destination_file_names = service.list_all_file_names()
 
     for source_file, destination_file in product(source_file_names, destination_file_names):
         source_path = PATH_SRC / source_file
