@@ -52,6 +52,8 @@ Clone the repository and install the required dependencies:
 git clone https://github.com/avtomatik/fileworks.git
 cd fileworks
 pip install --no-cache-dir -r requirements.txt
+cp .env.example .env
+# Make Necessary Amendments to .env
 ```
 
 
