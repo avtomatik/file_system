@@ -3,9 +3,8 @@ from itertools import product
 from pathlib import Path
 
 from core.config import PATH, PATH_CTR, PATH_DST, PATH_SRC, PATH_TST
+from tools.filters import FileService
 from utils.date import get_creation_time
-
-from fileworks.tools.filters import FileService
 
 
 def copy_files_to_destination(file_names: tuple[str], path_src: Path, path_dst: Path) -> None:

@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Set, Tuple, Union
 
-from core.protocols import MatchFileFilter
+from core.interfaces import MatchFileFilter
 
 
 class NameExclusionFilter:
