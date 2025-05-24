@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Iterable, Optional
 
-from fileworks.interfaces.protocols import FileNameTransformer, Logger
-from fileworks.tools.loggers import NullLogger
+from ..interfaces.protocols import FileNameTransformer, Logger
+from .loggers import NullLogger
 
 
 class FileMoverRenamer:

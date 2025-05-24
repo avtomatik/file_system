@@ -1,12 +1,12 @@
 import argparse
 from pathlib import Path
 
-from fileworks.interfaces.protocols import FileTransformer
-from fileworks.tools.cleaners import (CyrillicToLatinTransliterator,
+from .interfaces.protocols import FileTransformer
+from .tools.cleaners import (CyrillicToLatinTransliterator,
                                       RegexStringCleaner)
-from fileworks.tools.filters import FileExtensionFilter, NullFileFilter
-from fileworks.tools.movers import FileMoverRenamer
-from fileworks.tools.transformers import TrimFileNameTransformer
+from .tools.filters import FileExtensionFilter, NullFileFilter
+from .tools.movers import FileMoverRenamer
+from .tools.transformers import TrimFileNameTransformer
 
 
 class TrimFileNameTransformerAdapter:

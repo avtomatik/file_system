@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Set, Tuple, Union
 
-from fileworks.interfaces.protocols import MatchFileFilter
+from ..interfaces.protocols import MatchFileFilter
 
 
 class NameExclusionFilter:

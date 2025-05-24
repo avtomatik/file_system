@@ -4,7 +4,7 @@
 
 import re
 
-from fileworks.core.constants import CYRILLIC_TO_LATIN
+from ..core.constants import CYRILLIC_TO_LATIN
 
 
 class RegexStringCleaner:
