@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Set, Tuple, Union
 
-from core.interfaces import MatchFileFilter
+from fileworks.interfaces.protocols import MatchFileFilter
 
 
 class NameExclusionFilter:
@@ -159,3 +159,19 @@ class FileService:
                 filenames = [p.name for p in path.iterdir() if p.is_file()]
                 result.append((dirnames, filenames))
         return result
+
+
+class NullFileFilter:
+    """A filter that accepts all regular files (ignores directories)."""
+
+    def is_target(self, file: Path) -> bool:
+        return file.is_file()
+
+
+class FileExtensionFilter:
+    def __init__(self, extensions: tuple[str, ...]):
+        self.extensions = tuple(f'.{ext}' if not ext.startswith(
+            '.') else ext for ext in extensions)
+
+    def is_target(self, file: Path) -> bool:
+        return file.is_file() and file.suffix in self.extensions

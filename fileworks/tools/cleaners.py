@@ -1,26 +1,11 @@
-import re
-from typing import Protocol
-
-from core.constants import CYRILLIC_TO_LATIN
-
-# ==========================
-# Protocols (Interfaces)
-# ==========================
-
-
-class StringCleaner(Protocol):
-    def clean(self, string: str) -> str:
-        ...
-
-
-class Transliterator(Protocol):
-    def transliterate(self, text: str) -> str:
-        ...
-
-
 # ==========================
 # Concrete Implementations
 # ==========================
+
+import re
+
+from fileworks.core.constants import CYRILLIC_TO_LATIN
+
 
 class RegexStringCleaner:
     def __init__(self, fill: str = ' '):

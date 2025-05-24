@@ -65,7 +65,7 @@ cp .env.example .env
 Run the CLI tool with Python, calling the main module:
 
 ```bash
-python -m fileworks.fileworks.main [path] [-e EXTENSIONS ...] [-v]
+python3 -m fileworks.fileworks.main [path] [-e EXTENSIONS ...] [-v]
 ```
 
 * `path` (optional):
@@ -85,25 +85,25 @@ python -m fileworks.fileworks.main [path] [-e EXTENSIONS ...] [-v]
 Process **all files** in the current directory:
 
 ```bash
-python -m fileworks.fileworks.main
+python3 -m fileworks.fileworks.main
 ```
 
 Process **only `.csv` and `.txt` files** in the current directory:
 
 ```bash
-python -m fileworks.fileworks.main -e csv txt
+python3 -m fileworks.fileworks.main -e csv txt
 ```
 
 Process **all files** in a specific directory:
 
 ```bash
-python -m fileworks.fileworks.main /path/to/directory
+python3 -m fileworks.fileworks.main /path/to/directory
 ```
 
 Process **only `.csv` files** in a specific directory with verbose output:
 
 ```bash
-python -m fileworks.fileworks.main /path/to/directory -e csv -v
+python3 -m fileworks.fileworks.main /path/to/directory -e csv -v
 ```
 
 ---
@@ -121,7 +121,7 @@ python -m fileworks.fileworks.main /path/to/directory -e csv -v
 You can always run the tool with `-h` or `--help` to get usage information:
 
 ```bash
-python -m fileworks.fileworks.main -h
+python3 -m fileworks.fileworks.main -h
 ```
 
 ---

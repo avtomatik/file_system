@@ -1,26 +1,12 @@
 import argparse
 from pathlib import Path
 
-from core.interfaces import FileTransformer
-from tools.mover import FileMoverRenamer
-from tools.transformers import TrimFileNameTransformer
-from utils.string import CyrillicToLatinTransliterator, RegexStringCleaner
-
-
-class NullFileFilter:
-    """A filter that accepts all regular files (ignores directories)."""
-
-    def is_target(self, file: Path) -> bool:
-        return file.is_file()
-
-
-class FileExtensionFilter:
-    def __init__(self, extensions: tuple[str, ...]):
-        self.extensions = tuple(f'.{ext}' if not ext.startswith(
-            '.') else ext for ext in extensions)
-
-    def is_target(self, file: Path) -> bool:
-        return file.is_file() and file.suffix in self.extensions
+from fileworks.interfaces.protocols import FileTransformer
+from fileworks.tools.cleaners import (CyrillicToLatinTransliterator,
+                                      RegexStringCleaner)
+from fileworks.tools.filters import FileExtensionFilter, NullFileFilter
+from fileworks.tools.movers import FileMoverRenamer
+from fileworks.tools.transformers import TrimFileNameTransformer
 
 
 class TrimFileNameTransformerAdapter:

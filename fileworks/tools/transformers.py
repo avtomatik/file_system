@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from utils.string import StringCleaner, Transliterator
+from fileworks.interfaces.protocols import StringCleaner, Transliterator
 
 
 class TrimFileNameTransformer:

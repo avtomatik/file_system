@@ -35,3 +35,18 @@ class MatchFileFilter(Protocol):
 class TargetFileFilter(Protocol):
     def is_target(self, file: Path) -> bool:
         ...
+
+
+# ==========================
+# Protocols (Interfaces)
+# ==========================
+
+
+class StringCleaner(Protocol):
+    def clean(self, string: str) -> str:
+        ...
+
+
+class Transliterator(Protocol):
+    def transliterate(self, text: str) -> str:
+        ...
