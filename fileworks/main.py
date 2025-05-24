@@ -2,8 +2,7 @@ import argparse
 from pathlib import Path
 
 from .interfaces.protocols import FileTransformer
-from .tools.cleaners import (CyrillicToLatinTransliterator,
-                                      RegexStringCleaner)
+from .tools.cleaners import CyrillicToLatinTransliterator, RegexStringCleaner
 from .tools.filters import FileExtensionFilter, NullFileFilter
 from .tools.movers import FileMoverRenamer
 from .tools.transformers import TrimFileNameTransformer
