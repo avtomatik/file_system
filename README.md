@@ -2,6 +2,8 @@
 
 **FileWorks** is a Python-based utility suite designed for efficient file system operations, including file synchronization, transformation, and reporting. It provides a set of scripts to automate common file management tasks, making it easier to handle large volumes of files with minimal manual intervention.
 
+**And the most of all:** A simple CLI tool to move and rename files with customizable filtering and transformation.
+
 ## Features
 
 * **File Synchronization**: Keep directories in sync by copying or moving files between them.
@@ -9,7 +11,7 @@
 * **File Reporting**: Generate reports on file discrepancies and changes.
 * **Utility Scripts**: Additional scripts for file system operations and comparisons.
 
-## Folder Structure
+## Folder Structure (To Be Updated)
 
 The repository is organized as follows:
 
@@ -42,7 +44,7 @@ fileworks/
 └── requirements.txt             # Python dependencies
 ```
 
-
+---
 
 ## Installation
 
@@ -53,26 +55,82 @@ git clone https://github.com/avtomatik/fileworks.git
 cd fileworks
 pip install --no-cache-dir -r requirements.txt
 cp .env.example .env
-# Make Necessary Amendments to .env
+# Then Make Necessary Amendments to .env
 ```
 
+---
 
+## Usage
 
-## Usage Not Tested
-
-Each script in the `file_system/` directory can be run independently from the command line. For example, to mirror files between two directories:
+Run the CLI tool with Python, calling the main module:
 
 ```bash
-python file_system/mirror_files.py /path/to/source /path/to/destination
+python -m fileworks.fileworks.main [path] [-e EXTENSIONS ...] [-v]
 ```
 
+* `path` (optional):
+  Directory path to process. Defaults to the current working directory if not provided.
 
+* `-e`, `--extensions` (optional):
+  Filter files by one or more file extensions (without the leading dot).
+  Example: `-e csv txt` will only process `.csv` and `.txt` files.
 
-Refer to the individual script files for specific usage instructions and options.
+* `-v`, `--verbose` (optional):
+  Enable verbose output, printing info about the processing steps.
+
+---
+
+## Examples
+
+Process **all files** in the current directory:
+
+```bash
+python -m fileworks.fileworks.main
+```
+
+Process **only `.csv` and `.txt` files** in the current directory:
+
+```bash
+python -m fileworks.fileworks.main -e csv txt
+```
+
+Process **all files** in a specific directory:
+
+```bash
+python -m fileworks.fileworks.main /path/to/directory
+```
+
+Process **only `.csv` files** in a specific directory with verbose output:
+
+```bash
+python -m fileworks.fileworks.main /path/to/directory -e csv -v
+```
+
+---
+
+## Notes
+
+* File extensions passed to `-e` should **not** include the leading dot (`.`).
+* If no extensions are specified, all files in the directory are processed.
+* The tool processes only **regular files**, ignoring directories.
+
+---
+
+## Help
+
+You can always run the tool with `-h` or `--help` to get usage information:
+
+```bash
+python -m fileworks.fileworks.main -h
+```
+
+---
 
 ## Contributing
 
 Contributions are welcome! Please fork the repository, create a new branch, and submit a pull request with your proposed changes.
+
+---
 
 ## License
 

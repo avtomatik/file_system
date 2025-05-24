@@ -1,6 +1,6 @@
+import argparse
 from pathlib import Path
 
-from core.config import PATH
 from core.interfaces import FileTransformer
 from tools.mover import FileMoverRenamer
 from tools.transformers import TrimFileNameTransformer
@@ -16,14 +16,16 @@ class NullFileFilter:
 
 class FileExtensionFilter:
     def __init__(self, extensions: tuple[str, ...]):
-        self.extensions = extensions
+        self.extensions = tuple(f'.{ext}' if not ext.startswith(
+            '.') else ext for ext in extensions)
 
     def is_target(self, file: Path) -> bool:
         return file.is_file() and file.suffix in self.extensions
 
 
 class TrimFileNameTransformerAdapter:
-    """Adapter to make TrimFileNameTransformer compatible with FileTransformer protocol."""
+    """Adapter to make TrimFileNameTransformer compatible with FileTransformer
+    protocol."""
 
     def __init__(self, transformer: TrimFileNameTransformer):
         self.transformer = transformer
@@ -49,9 +51,27 @@ class FileMoverAdapter:
 
 
 def main():
-    file_filter = NullFileFilter()  # Accept all files
-    # Example usage:
-    # file_filter = FileExtensionFilter(('.csv', '.txt'))
+    parser = argparse.ArgumentParser(description='FileWorks CLI')
+    parser.add_argument(
+        'path',
+        nargs='?',
+        default='.',
+        help='Path to the directory to process (default: current directory)'
+    )
+    parser.add_argument(
+        '-e', '--extensions',
+        nargs='+',
+        help='Filter files by extensions (space separated, e.g. -e csv txt)'
+    )
+    args = parser.parse_args()
+
+    PATH = Path(args.path).resolve()
+
+    if args.extensions:
+        file_filter = FileExtensionFilter(tuple(args.extensions))
+    else:
+        file_filter = NullFileFilter()
+
     cleaner = RegexStringCleaner(fill='_')
     transliterator = CyrillicToLatinTransliterator()
     transformer = TrimFileNameTransformer(cleaner, transliterator)
