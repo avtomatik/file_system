@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from fileworks.interfaces.protocols import FileTransformer
-from fileworks.tools.movers import FileMoverRenamer
-from fileworks.tools.transformers import TrimFileNameTransformer
+from .protocols import FileTransformer
+from ..tools.movers import FileMoverRenamer
+from ..tools.transformers import TrimFileNameTransformer
 
 
 class TrimFileNameTransformerAdapter:

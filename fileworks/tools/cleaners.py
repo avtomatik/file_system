@@ -1,19 +1,18 @@
-# ==========================
-# Concrete Implementations
-# ==========================
-
 import re
 
 from ..core.constants import CYRILLIC_TO_LATIN
 
 
 class RegexStringCleaner:
-    def __init__(self, fill: str = ' '):
+    def __init__(self, fill: str = '_'):
         self.fill = fill
+        self.pattern = rf'[\W{re.escape(fill)}]+'
 
-    def clean(self, string: str) -> str:
-        split_string = re.split(r'\W', string)
-        return self.fill.join(part for part in split_string if part)
+    def clean(self, text: str) -> str:
+        parts = [
+            part for part in re.split(self.pattern, text.strip()) if part
+        ]
+        return self.fill.join(parts).strip(self.fill)
 
 
 class CyrillicToLatinTransliterator:
