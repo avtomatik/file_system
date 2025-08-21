@@ -3,16 +3,12 @@ CYRILLIC_IN_LATIN = (
     ',yo'
 )
 
-PREFIXES = {'.', '_', '~'}
-
-RESERVED = {'FOUND.000', 'System Volume Information'}
-
-FILE_NAME_SRC = 'file_names_d.txt'
-
-FILE_NAME_DST = 'file_names_e.txt'
-
-
 CYRILLIC_TO_LATIN = {
     chr(idx): latin
     for idx, latin in enumerate(CYRILLIC_IN_LATIN.split(','), start=1072)
 }
+
+
+PREFIXES = {'.', '_', '~'}
+
+RESERVED = {'FOUND.000', 'System Volume Information'}
